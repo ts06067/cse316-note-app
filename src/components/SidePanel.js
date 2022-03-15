@@ -1,4 +1,3 @@
-import Button from "./Button";
 import "./css/SidePanel.css";
 import SearchBar from "./SearchBar";
 import TopBar from "./TopBar";
