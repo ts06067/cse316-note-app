@@ -1,0 +1,6 @@
+.bottomTag {
+  background-color: cadetblue;
+  flex-basis: 100px;
+  flex-shrink: 0;
+  margin-top: auto;
+}

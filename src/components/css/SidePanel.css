@@ -1,0 +1,7 @@
+.sidePanel {
+  display: flex;
+  flex-direction: column;
+  background-color: yellow;
+  flex-basis: 300px;
+  flex-shrink: 0;
+}
