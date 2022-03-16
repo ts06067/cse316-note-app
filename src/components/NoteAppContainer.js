@@ -4,17 +4,58 @@ import NoteStorageUtils from "../api/NoteStorageUtils";
 
 import "./css/NoteAppContainer.css";
 import { useState } from "react";
+import TagUtils from "../api/TagUtils";
 
 function NoteAppContainer() {
   //states
   const [notes, setNotes] = useState(NoteStorageUtils.getNoteList());
   const [active, setActive] = useState(undefined);
   const [body, setBody] = useState("");
+  const [tags, setTags] = useState(TagUtils.getTags(active));
 
   //handlers
   const handleChange = (e) => {
     setBody(e.target.value);
   };
+
+  //
+  //  handlers for Tags
+  //
+
+  const handlerTags = {
+    handleAddTag: (tag) => {
+      if (active === undefined) {
+        return;
+      }
+      let selectedNote = NoteStorageUtils.getNoteById(active.id); //we are editing tags for a selected note
+
+      TagUtils.addTag(selectedNote, tag); //add tags in note database
+      setNotes(NoteStorageUtils.getNoteList()); //update note database with some editted tags
+
+      selectedNote = NoteStorageUtils.getNoteById(active.id); //now selectedNote is old, so get the same note again.
+
+      setTags(TagUtils.getTags(selectedNote));
+    },
+    handleDeleteTag: (i) => {
+      if (active === undefined) {
+        return;
+      }
+
+      let selectedNote = NoteStorageUtils.getNoteById(active.id);
+
+      TagUtils.deleteTag(selectedNote, i);
+      setNotes(NoteStorageUtils.getNoteList());
+
+      selectedNote = NoteStorageUtils.getNoteById(active.id);
+
+      setTags(TagUtils.getTags(selectedNote));
+    },
+    handleDragTag: (tag, currPos, newPos) => {},
+  };
+
+  //
+  //  handlers for Notes
+  //
 
   const handlers = {
     handleAdd: (e) => {
@@ -31,6 +72,7 @@ function NoteAppContainer() {
       //auto select
       setActive(NoteStorageUtils.getLastNote());
       setBody(NoteStorageUtils.getLastNote().body);
+      setTags(NoteStorageUtils.getLastNote().tags);
     },
 
     handleDelete: (e) => {
@@ -54,7 +96,8 @@ function NoteAppContainer() {
     handleSelect: (e) => {
       const selectedNote = NoteStorageUtils.getNoteById(e.target.id);
       setActive(selectedNote);
-      setBody(selectedNote.body);
+      setBody(selectedNote.body); //putting active instead of selectedNote will lead to an weird behavior
+      setTags(TagUtils.getTags(selectedNote));
     },
 
     handleEdit: (e) => {
@@ -91,9 +134,13 @@ function NoteAppContainer() {
       <MainPanel
         items={mainPanelButtons}
         body={body}
+        tags={tags}
         onChangeBody={handleChange}
         onDelete={handlers.handleDelete}
         onEdit={handlers.handleEdit}
+        onAddTag={handlerTags.handleAddTag}
+        onDeleteTag={handlerTags.handleDeleteTag}
+        onDragTag={handlerTags.handleDragTag}
       ></MainPanel>
     </div>
   );
