@@ -76,6 +76,7 @@ function NoteAppContainer() {
       const newNote = {
         id: Math.floor(Math.random() * 10000),
         body: "New Note...",
+        date: Date.now(),
       };
 
       //add the note to storage, then update the storage

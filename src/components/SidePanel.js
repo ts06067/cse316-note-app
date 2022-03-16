@@ -1,4 +1,5 @@
 import "./css/SidePanel.css";
+import NoteItem from "./NoteItem";
 import SearchBar from "./SearchBar";
 import TopBarLeft from "./TopBarLeft";
 
@@ -8,20 +9,12 @@ function SidePanel(props) {
       <TopBarLeft onAdd={props.onAdd}></TopBarLeft>
       <SearchBar></SearchBar>
       {props.notes.map((note) => (
-        <p
+        <NoteItem
           key={note.id}
           onClick={props.onSelect}
-          id={note.id}
-          style={
-            props.active !== undefined
-              ? parseInt(note.id) === parseInt(props.active.id)
-                ? { backgroundColor: "pink" }
-                : { backgroundColor: "white" }
-              : { backgroundColor: "skyblue" }
-          }
-        >
-          {note.body}
-        </p>
+          note={note}
+          active={props.active}
+        ></NoteItem>
       ))}
     </div>
   );
