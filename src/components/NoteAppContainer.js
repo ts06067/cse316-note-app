@@ -5,6 +5,7 @@ import NoteStorageUtils from "../api/NoteStorageUtils";
 import "./css/NoteAppContainer.css";
 import { useState } from "react";
 import TagUtils from "../api/TagUtils";
+import ProfilePage from "./ProfilePage";
 
 function NoteAppContainer() {
   //states
@@ -13,9 +14,21 @@ function NoteAppContainer() {
   const [body, setBody] = useState("");
   const [tags, setTags] = useState(TagUtils.getTags(active));
 
+  const [showProfile, setShowProfile] = useState(false);
+
   //handlers
   const handleChange = (e) => {
     setBody(e.target.value);
+  };
+
+  //
+  //  handlers for Windows Visibility
+  //
+
+  const handlerProfile = {
+    handleOpenProfile: (e) => {
+      setShowProfile(!showProfile);
+    },
   };
 
   //
@@ -134,11 +147,17 @@ function NoteAppContainer() {
 
   return (
     <div className="container">
+      {showProfile && (
+        <ProfilePage
+          onOpenProfile={handlerProfile.handleOpenProfile}
+        ></ProfilePage>
+      )}
       <SidePanel
         notes={notes}
         active={active}
         onAdd={handlers.handleAdd}
         onSelect={handlers.handleSelect}
+        onOpenProfile={handlerProfile.handleOpenProfile}
       ></SidePanel>
       <MainPanel
         body={body}
