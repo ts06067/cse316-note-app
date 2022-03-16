@@ -120,7 +120,14 @@ function NoteAppContainer() {
         return;
       }
 
-      NoteStorageUtils.updateNote(active, body);
+      const edittedNote = active;
+
+      edittedNote.body = body;
+      edittedNote.date = Date.now();
+
+      setActive(edittedNote);
+
+      NoteStorageUtils.updateNote(edittedNote, body);
       setNotes(NoteStorageUtils.getNoteList());
     },
   };
