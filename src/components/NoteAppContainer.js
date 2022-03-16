@@ -8,7 +8,7 @@ import { useState } from "react";
 function NoteAppContainer() {
   //states
   const [notes, setNotes] = useState(NoteStorageUtils.getNoteList());
-  const [active, setActive] = useState({});
+  const [active, setActive] = useState(undefined);
   const [body, setBody] = useState("");
 
   //handlers
@@ -29,20 +29,36 @@ function NoteAppContainer() {
       setNotes(NoteStorageUtils.getNoteList());
 
       //auto select
-      setActive(newNote);
-      setBody(newNote.body);
-      console.log(active);
+      setActive(NoteStorageUtils.getLastNote());
+      setBody(NoteStorageUtils.getLastNote().body);
     },
 
     handleDelete: (e) => {
-      console.log("delete button clicked");
+      NoteStorageUtils.delNote(active);
+      setNotes(NoteStorageUtils.getNoteList());
+
+      if (NoteStorageUtils.isEmpty()) {
+        setActive(undefined);
+        return;
+      }
+
+      //auto select
+      setActive(NoteStorageUtils.getFirstNote());
+      setBody(NoteStorageUtils.getFirstNote().body);
     },
 
     handleSelect: (e) => {
-      const selectedNote = notes.find((note) => note.id == e.target.id);
+      const selectedNote = NoteStorageUtils.getNoteById(e.target.id);
       setActive(selectedNote);
       setBody(selectedNote.body);
-      console.log(body);
+    },
+
+    handleEdit: (e) => {
+      if (active == undefined) {
+        return;
+      }
+      NoteStorageUtils.updateNote(active, body);
+      setNotes(NoteStorageUtils.getNoteList());
     },
   };
 
@@ -72,6 +88,7 @@ function NoteAppContainer() {
         body={body}
         onChangeBody={handleChange}
         onDelete={handlers.handleDelete}
+        onEdit={handlers.handleEdit}
       ></MainPanel>
     </div>
   );

@@ -17,7 +17,7 @@ function SidePanel(props) {
               ? note.id == props.active.id
                 ? { backgroundColor: "pink" }
                 : { backgroundColor: "white" }
-              : { backgroundColor: "white" }
+              : { backgroundColor: "skyblue" }
           }
         >
           {note.body}
