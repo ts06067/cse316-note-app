@@ -13,8 +13,8 @@ function SidePanel(props) {
           onClick={props.onSelect}
           id={note.id}
           style={
-            props.active != undefined
-              ? note.id == props.active.id
+            props.active !== undefined
+              ? parseInt(note.id) === parseInt(props.active.id)
                 ? { backgroundColor: "pink" }
                 : { backgroundColor: "white" }
               : { backgroundColor: "skyblue" }
