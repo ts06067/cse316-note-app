@@ -1,12 +1,12 @@
 import TextBody from "./TextBody";
 import "./css/MainPanel.css";
-import TopBar from "./TopBar";
 import BottomTag from "./BottomTag";
+import TopBarRight from "./TopBarRight";
 
 function MainPanel(props) {
   return (
     <div className="mainPanel">
-      <TopBar items={props.items} onDelete={props.onDelete}></TopBar>
+      <TopBarRight onDelete={props.onDelete}></TopBarRight>
       <TextBody
         onChangeBody={props.onChangeBody}
         onEdit={props.onEdit}

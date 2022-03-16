@@ -1,13 +1,13 @@
-import Button from "./Button";
 import "./css/TopBar.css";
 
-function TopBar(props) {
+function TopBarLeft(props) {
   return (
     <div className="topBar">
+      <button>profile</button>
+      <button>logo</button>
       <button onClick={props.onAdd}>add</button>
-      <button onClick={props.onDelete}>delete</button>
     </div>
   );
 }
 
-export default TopBar;
+export default TopBarLeft;
