@@ -1,8 +1,7 @@
 export default class NoteStorageUtils {
   static getNoteList() {
-    const newNoteList = JSON.parse(sessionStorage.getItem("notes-storage"));
-
-    return newNoteList;
+    let newNoteList = JSON.parse(sessionStorage.getItem("notes-storage"));
+    return newNoteList === null ? [] : newNoteList;
   }
 
   static setNoteList(newNoteList) {
