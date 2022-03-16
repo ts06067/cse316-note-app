@@ -34,6 +34,10 @@ function NoteAppContainer() {
     },
 
     handleDelete: (e) => {
+      if (active === undefined) {
+        return;
+      }
+
       NoteStorageUtils.delNote(active);
       setNotes(NoteStorageUtils.getNoteList());
 
@@ -54,9 +58,10 @@ function NoteAppContainer() {
     },
 
     handleEdit: (e) => {
-      if (active == undefined) {
+      if (active === undefined) {
         return;
       }
+
       NoteStorageUtils.updateNote(active, body);
       setNotes(NoteStorageUtils.getNoteList());
     },

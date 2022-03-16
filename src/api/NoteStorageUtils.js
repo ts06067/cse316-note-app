@@ -1,8 +1,7 @@
 export default class NoteStorageUtils {
   static getNoteList() {
-    const newNoteList = JSON.parse(sessionStorage.getItem("notes-storage"));
-
-    return newNoteList;
+    let newNoteList = JSON.parse(sessionStorage.getItem("notes-storage"));
+    return newNoteList === null ? [] : newNoteList;
   }
 
   static setNoteList(newNoteList) {
@@ -17,13 +16,14 @@ export default class NoteStorageUtils {
 
   static delNote(toDelete) {
     let notes = this.getNoteList() || [];
-    notes = notes.filter((note) => note.id != toDelete.id);
+    notes = notes.filter((note) => parseInt(note.id) !== parseInt(toDelete.id));
     this.setNoteList(notes);
   }
 
   static getNoteById(id) {
     const notes = this.getNoteList();
-    return notes.find((note) => note.id == id);
+    const found = notes.find((note) => parseInt(note.id) === parseInt(id));
+    return found;
   }
 
   static getNote(idx) {
@@ -43,7 +43,7 @@ export default class NoteStorageUtils {
   static updateNote(noteToUpdate, body) {
     const notes = this.getNoteList();
     notes.forEach((note) => {
-      if (note.id == noteToUpdate.id) {
+      if (note.id === noteToUpdate.id) {
         note.body = body;
       }
     });
@@ -51,6 +51,6 @@ export default class NoteStorageUtils {
   }
 
   static isEmpty() {
-    return this.getNoteList().length == 0;
+    return this.getNoteList().length === 0;
   }
 }
