@@ -50,7 +50,20 @@ function NoteAppContainer() {
 
       setTags(TagUtils.getTags(selectedNote));
     },
-    handleDragTag: (tag, currPos, newPos) => {},
+    handleDragTag: (tag, currPos, newPos) => {
+      if (active === undefined) {
+        return;
+      }
+
+      let selectedNote = NoteStorageUtils.getNoteById(active.id);
+
+      TagUtils.dragTag(selectedNote, tag, currPos, newPos);
+      setNotes(NoteStorageUtils.getNoteList());
+
+      selectedNote = NoteStorageUtils.getNoteById(active.id);
+
+      setTags(TagUtils.getTags(selectedNote));
+    },
   };
 
   //

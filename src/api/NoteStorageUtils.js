@@ -55,7 +55,6 @@ export default class NoteStorageUtils {
     notes.forEach((note) => {
       if (note.id === noteToUpdate.id) {
         note.tags = tags;
-        console.log("tag updated: " + note.tags);
       }
     });
     this.setNoteList(notes);

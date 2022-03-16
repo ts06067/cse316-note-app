@@ -16,6 +16,7 @@ function BottomTag(props) {
         delimiters={delimiters}
         handleAddition={props.onAddTag}
         handleDelete={props.onDeleteTag}
+        handleDrag={props.onDragTag}
         inputFieldPosition="bottom"
       ></ReactTags>
     </div>

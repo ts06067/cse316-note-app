@@ -26,4 +26,13 @@ export default class TagUtils {
     tags = tags.filter((tag, idx) => idx !== i);
     this.setTags(note, tags);
   }
+
+  static dragTag(note, tag, currPos, newPos) {
+    let tags = this.getTags(note);
+
+    tags.splice(currPos, 1);
+    tags.splice(newPos, 0, tag);
+
+    this.setTags(note, tags);
+  }
 }

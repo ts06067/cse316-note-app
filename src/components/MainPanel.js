@@ -16,6 +16,7 @@ function MainPanel(props) {
         tags={props.tags}
         onAddTag={props.onAddTag}
         onDeleteTag={props.onDeleteTag}
+        onDragTag={props.onDragTag}
       ></BottomTag>
     </div>
   );
