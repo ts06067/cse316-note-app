@@ -1,11 +1,11 @@
 import "./css/SidePanel.css";
 import SearchBar from "./SearchBar";
-import TopBar from "./TopBar";
+import TopBarLeft from "./TopBarLeft";
 
 function SidePanel(props) {
   return (
     <div className="sidePanel">
-      <TopBar items={props.items} onAdd={props.onAdd}></TopBar>
+      <TopBarLeft onAdd={props.onAdd}></TopBarLeft>
       <SearchBar></SearchBar>
       {props.notes.map((note) => (
         <p

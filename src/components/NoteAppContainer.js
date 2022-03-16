@@ -104,6 +104,7 @@ function NoteAppContainer() {
       //auto select
       setActive(NoteStorageUtils.getFirstNote());
       setBody(NoteStorageUtils.getFirstNote().body);
+      setTags(NoteStorageUtils.getFirstNote().tags);
     },
 
     handleSelect: (e) => {
@@ -123,29 +124,15 @@ function NoteAppContainer() {
     },
   };
 
-  //button elements
-  const sidePanelButtons = [
-    { id: "profile", text: "profile" },
-    { id: "logo", text: "logo" },
-    { id: "add", text: "add" },
-  ];
-  const mainPanelButtons = [
-    { id: "none1", text: "none" },
-    { id: "none2", text: "none" },
-    { id: "del", text: "delete" },
-  ];
-
   return (
     <div className="container">
       <SidePanel
-        items={sidePanelButtons}
         notes={notes}
         active={active}
         onAdd={handlers.handleAdd}
         onSelect={handlers.handleSelect}
       ></SidePanel>
       <MainPanel
-        items={mainPanelButtons}
         body={body}
         tags={tags}
         onChangeBody={handleChange}
