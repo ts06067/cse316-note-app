@@ -12,7 +12,12 @@ function MainPanel(props) {
         onEdit={props.onEdit}
         body={props.body}
       ></TextBody>
-      <BottomTag></BottomTag>
+      <BottomTag
+        tags={props.tags}
+        onAddTag={props.onAddTag}
+        onDeleteTag={props.onDeleteTag}
+        onDragTag={props.onDragTag}
+      ></BottomTag>
     </div>
   );
 }

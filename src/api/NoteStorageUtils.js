@@ -50,6 +50,16 @@ export default class NoteStorageUtils {
     this.setNoteList(notes);
   }
 
+  static updateTags(noteToUpdate, tags) {
+    const notes = this.getNoteList();
+    notes.forEach((note) => {
+      if (note.id === noteToUpdate.id) {
+        note.tags = tags;
+      }
+    });
+    this.setNoteList(notes);
+  }
+
   static isEmpty() {
     return this.getNoteList().length === 0;
   }
