@@ -4,9 +4,8 @@ import "./css/TopBar.css";
 function TopBar(props) {
   return (
     <div className="topBar">
-      {props.items.map((item) => (
-        <Button key={item.id} text={item.text}></Button>
-      ))}
+      <button onClick={props.onAdd}>add</button>
+      <button onClick={props.onDelete}>delete</button>
     </div>
   );
 }

@@ -10,4 +10,10 @@ export default class NoteStorageUtils {
   static setNoteList(newNoteList) {
     sessionStorage.setItem("notes-storage", JSON.stringify(newNoteList));
   }
+
+  static addNote(note) {
+    const notes = this.getNoteList() || [];
+    notes.push(note);
+    this.setNoteList(notes);
+  }
 }
