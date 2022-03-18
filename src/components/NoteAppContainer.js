@@ -3,8 +3,10 @@ import SidePanel from "./SidePanel";
 import NoteStorageUtils from "../api/NoteStorageUtils";
 
 import "./css/NoteAppContainer.css";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import TagUtils from "../api/TagUtils";
+
+import useWindowDimensions from "./WindowDimensions.js";
 
 function NoteAppContainer() {
   //states
@@ -13,9 +15,78 @@ function NoteAppContainer() {
   const [body, setBody] = useState("");
   const [tags, setTags] = useState(TagUtils.getTags(active));
 
+  const { width, height } = useWindowDimensions();
+
+  const [editMode, setEditMode] = useState(false);
+
+  const [styleSideBar, setStyleSideBar] = useState({});
+  const [styleEditor, setStyleEditor] = useState({});
+
+  const [styleButton, setStyleButton] = useState({});
+
   //handlers
   const handleChange = (e) => {
     setBody(e.target.value);
+  };
+
+  useEffect(() => handleComponentVisibility(), [width]);
+
+  useEffect(() => handleButtonVisibility(), [width]);
+
+  useEffect(
+    () => (active === undefined ? setEditMode(false) : setEditMode(true)),
+    [active]
+  );
+
+  //
+  //  handlers for Window Action
+  //
+
+  const handleShowEditor = () => {
+    let mobile = width < 500 ? true : false;
+
+    if (!mobile) {
+      return;
+    }
+
+    let styleSideBar = { display: "none", flexBasis: "100vw" };
+    let styleEditor = { display: "flex", flexBasis: "100vw" };
+
+    setStyleSideBar(styleSideBar);
+    setStyleEditor(styleEditor);
+  };
+
+  const handleBackToList = () => {
+    let styleSideBar = { display: "flex", flexBasis: "100vw" };
+    let styleEditor = { display: "none", flexBasis: "100vw" };
+
+    setStyleSideBar(styleSideBar);
+    setStyleEditor(styleEditor);
+  };
+
+  const handleButtonVisibility = () => {
+    let mobile = width < 500 ? true : false;
+
+    setStyleButton({ display: mobile ? "flex" : "none" });
+  };
+
+  const handleComponentVisibility = () => {
+    let mobile = width < 500 ? true : false;
+
+    let styleSideBar = { display: "flex", flexBasis: "300px" };
+    let styleEditor = { display: "flex" };
+
+    if (mobile && editMode) {
+      styleSideBar.display = "none";
+      styleSideBar.flexBasis = "100vw";
+    } else if (mobile) {
+      //and not edit mode
+      styleEditor.display = "none";
+      styleSideBar.flexBasis = "100vw";
+    }
+
+    setStyleSideBar(styleSideBar);
+    setStyleEditor(styleEditor);
   };
 
   //
@@ -79,6 +150,10 @@ function NoteAppContainer() {
         date: Date.now(),
       };
 
+      //enable textarea
+      document.querySelector("textarea").style.display = "flex";
+      document.querySelector("textarea").focus();
+
       //add the note to storage, then update the storage
       NoteStorageUtils.addNote(newNote);
       setNotes(NoteStorageUtils.getNoteList());
@@ -91,6 +166,7 @@ function NoteAppContainer() {
 
     handleDelete: (e) => {
       if (active === undefined) {
+        handleBackToList();
         return;
       }
 
@@ -98,14 +174,20 @@ function NoteAppContainer() {
       setNotes(NoteStorageUtils.getNoteList());
 
       if (NoteStorageUtils.isEmpty()) {
+        //if empty, disable textearea and deactivate selected note. otherwise, focus textarea.
         setActive(undefined);
+        document.querySelector("textarea").style.display = "none";
         return;
+      } else {
+        document.querySelector("textarea").focus();
       }
 
       //auto select
       setActive(NoteStorageUtils.getFirstNote());
       setBody(NoteStorageUtils.getFirstNote().body);
       setTags(NoteStorageUtils.getFirstNote().tags);
+
+      handleBackToList();
     },
 
     handleSelect: (e) => {
@@ -113,6 +195,11 @@ function NoteAppContainer() {
       setActive(selectedNote);
       setBody(selectedNote.body); //putting active instead of selectedNote will lead to an weird behavior
       setTags(TagUtils.getTags(selectedNote));
+
+      handleShowEditor();
+
+      document.querySelector("textarea").style.display = "flex";
+      document.querySelector("textarea").focus();
     },
 
     handleEdit: (e) => {
@@ -132,6 +219,7 @@ function NoteAppContainer() {
         active={active}
         onAdd={handlers.handleAdd}
         onSelect={handlers.handleSelect}
+        visible={styleSideBar}
       ></SidePanel>
       <MainPanel
         body={body}
@@ -142,6 +230,9 @@ function NoteAppContainer() {
         onAddTag={handlerTags.handleAddTag}
         onDeleteTag={handlerTags.handleDeleteTag}
         onDragTag={handlerTags.handleDragTag}
+        onBackToList={handleBackToList}
+        visible={styleEditor}
+        visibleButton={styleButton}
       ></MainPanel>
     </div>
   );

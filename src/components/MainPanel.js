@@ -5,12 +5,17 @@ import TopBarRight from "./TopBarRight";
 
 function MainPanel(props) {
   return (
-    <div className="mainPanel">
-      <TopBarRight onDelete={props.onDelete}></TopBarRight>
+    <div className="mainPanel" style={props.visible}>
+      <TopBarRight
+        onBackToList={props.onBackToList}
+        onDelete={props.onDelete}
+        visible={props.visibleButton}
+      ></TopBarRight>
       <TextBody
         onChangeBody={props.onChangeBody}
         onEdit={props.onEdit}
         body={props.body}
+        focus={props.focus}
       ></TextBody>
       <BottomTag
         tags={props.tags}

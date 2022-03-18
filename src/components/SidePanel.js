@@ -5,7 +5,7 @@ import TopBarLeft from "./TopBarLeft";
 
 function SidePanel(props) {
   return (
-    <div className="sidePanel">
+    <div className="sidePanel" style={props.visible}>
       <TopBarLeft onAdd={props.onAdd}></TopBarLeft>
       <SearchBar></SearchBar>
       {props.notes.map((note) => (
