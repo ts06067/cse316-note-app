@@ -3,13 +3,15 @@ import SidePanel from "./SidePanel";
 import NoteStorageUtils from "../api/NoteStorageUtils";
 
 import "./css/NoteAppContainer.css";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import TagUtils from "../api/TagUtils";
+import ProfilePage from "./ProfilePage";
+import ProfileStorageUtils from "../api/ProfileStorageUtils";
 
 import useWindowDimensions from "./WindowDimensions.js";
 
 function NoteAppContainer() {
-  //states
+  //states for notes
   const [notes, setNotes] = useState(NoteStorageUtils.getNoteList());
   const [active, setActive] = useState(undefined);
   const [body, setBody] = useState("");
@@ -23,6 +25,18 @@ function NoteAppContainer() {
   const [styleEditor, setStyleEditor] = useState({});
 
   const [styleButton, setStyleButton] = useState({});
+  //states for profile page
+  const [showProfile, setShowProfile] = useState(false);
+  const [profile, setProfile] = useState(ProfileStorageUtils.getProfile());
+
+  //profile inputs
+  const inputProfileImage = useRef(null);
+  const inputProfileName = useRef(null);
+  const inputProfileEmail = useRef(null);
+
+  //
+  //  handlers for Profile
+  //
 
   //handlers
   const handleChange = (e) => {
@@ -87,6 +101,35 @@ function NoteAppContainer() {
 
     setStyleSideBar(styleSideBar);
     setStyleEditor(styleEditor);
+  };
+
+  //
+  //  handlers for Windows Visibility
+  //
+
+  const handlerProfile = {
+    handleOpenProfile: (e) => {
+      if (
+        e.target.className === "background" ||
+        e.target.className === "btnProfile" ||
+        e.target.className === "btnClose"
+      ) {
+        setShowProfile(!showProfile);
+      }
+    },
+    handleSaveProfile: (e) => {
+      e.preventDefault(); //prevents default submit action
+
+      let newProfile = {
+        image: "url",
+
+        name: inputProfileName.current.value,
+        email: inputProfileEmail.current.value,
+      };
+
+      ProfileStorageUtils.setProfile(newProfile);
+      setProfile(ProfileStorageUtils.getProfile());
+    },
   };
 
   //
@@ -207,19 +250,37 @@ function NoteAppContainer() {
         return;
       }
 
-      NoteStorageUtils.updateNote(active, body);
+      const edittedNote = active;
+
+      edittedNote.body = body;
+      edittedNote.date = Date.now();
+
+      setActive(edittedNote);
+
+      NoteStorageUtils.updateNote(edittedNote, body);
       setNotes(NoteStorageUtils.getNoteList());
     },
   };
 
   return (
     <div className="container">
+      {showProfile && (
+        <ProfilePage
+          profile={profile}
+          onOpenProfile={handlerProfile.handleOpenProfile}
+          onSaveProfile={handlerProfile.handleSaveProfile}
+          inputProfileImage={inputProfileImage}
+          inputProfileName={inputProfileName}
+          inputProfileEmail={inputProfileEmail}
+        ></ProfilePage>
+      )}
       <SidePanel
         notes={notes}
         active={active}
         onAdd={handlers.handleAdd}
         onSelect={handlers.handleSelect}
         visible={styleSideBar}
+        onOpenProfile={handlerProfile.handleOpenProfile}
       ></SidePanel>
       <MainPanel
         body={body}

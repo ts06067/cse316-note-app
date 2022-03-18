@@ -1,7 +1,11 @@
 export default class NoteStorageUtils {
   static getNoteList() {
     let newNoteList = JSON.parse(sessionStorage.getItem("notes-storage"));
-    return newNoteList === null ? [] : newNoteList;
+    newNoteList = newNoteList === null ? [] : newNoteList;
+
+    newNoteList = newNoteList.sort((a, b) => (a.date < b.date ? 1 : -1));
+
+    return newNoteList;
   }
 
   static setNoteList(newNoteList) {
@@ -45,6 +49,7 @@ export default class NoteStorageUtils {
     notes.forEach((note) => {
       if (note.id === noteToUpdate.id) {
         note.body = body;
+        note.date = noteToUpdate.date;
       }
     });
     this.setNoteList(notes);

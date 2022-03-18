@@ -1,4 +1,49 @@
+:root {
+  --sidebar-width: 240px;
+  --text-color: rgb(50, 50, 50);
+  --background-color: #ffffff;
+  --light-background-color: #f4f4f4;
+  --nav-bar-color: #ffffff;
+  --selected-color: rgb(229, 241, 253);
+  --action-text-color: #ffffff;
+  --action-color: rgb(58, 99, 197);
+  --border-color: darkgray;
+  --border-thickness: 1.5px;
+}
+
 .container {
   display: flex;
   min-height: 100vh;
+}
+
+button {
+  box-sizing: border-box;
+  background-color: var(--background-color);
+  border: none;
+  border-radius: 10px;
+  height: 50px;
+  min-width: 50px;
+  font-size: 12pt;
+  flex-shrink: 0;
+  color: var(--text-color);
+}
+
+button:hover {
+  background-color: var(--selected-color);
+  cursor: pointer;
+}
+
+button.btnSave {
+  background-color: var(--action-color);
+  color: var(--action-text-color);
+}
+
+button.btnClose {
+  font-size: 24pt;
+}
+
+button.btnSave:hover {
+  background-color: var(--selected-color);
+  color: var(--text-color);
+  cursor: pointer;
 }

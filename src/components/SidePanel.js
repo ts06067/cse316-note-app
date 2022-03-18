@@ -5,8 +5,11 @@ import TopBarLeft from "./TopBarLeft";
 
 function SidePanel(props) {
   return (
-    <div className="sidePanel" style={props.visible}>
-      <TopBarLeft onAdd={props.onAdd}></TopBarLeft>
+    <div className="sidePanel">
+      <TopBarLeft
+        onAdd={props.onAdd}
+        onOpenProfile={props.onOpenProfile}
+      ></TopBarLeft>
       <SearchBar></SearchBar>
       {props.notes.map((note) => (
         <NoteItem
