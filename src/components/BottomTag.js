@@ -18,6 +18,7 @@ function BottomTag(props) {
         handleDelete={props.onDeleteTag}
         handleDrag={props.onDragTag}
         inputFieldPosition="bottom"
+        autofocus={false}
       ></ReactTags>
     </div>
   );
