@@ -1,4 +1,3 @@
-.item > div {
-  margin: 0;
-  padding: 0;
+.item {
+  padding: 5px;
 }

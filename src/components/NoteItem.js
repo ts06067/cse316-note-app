@@ -1,16 +1,21 @@
+import "./css/NoteItem.css";
+
 function NoteItem(props) {
   return (
     <div
       onClick={props.onClick}
-      id={props.note.id}
+      data-note-id={props.note.id}
       className={
         props.active !== undefined && props.note.id === props.active.id
           ? "item --selected"
           : "item"
       }
     >
-      {formatString(props.note.body)} <br></br>{" "}
-      {"\n" + formatDate(props.note.date)}
+      <span style={{ fontSize: 18 }}>
+        {formatString(props.note.body)}
+        <br></br>{" "}
+      </span>
+      <span style={{ fontSize: 14 }}>{"\n" + formatDate(props.note.date)}</span>
     </div>
   );
 }

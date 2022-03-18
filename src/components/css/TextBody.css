@@ -8,6 +8,11 @@ textarea {
   box-sizing: border-box;
   height: 100%;
   width: 100%;
+  padding: 10px;
   resize: none;
   border: none;
+}
+
+textarea:focus {
+  outline: none !important;
 }

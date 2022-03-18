@@ -220,6 +220,7 @@ function NoteAppContainer() {
       if (NoteStorageUtils.isEmpty()) {
         //if empty, disable textearea and deactivate selected note. otherwise, focus textarea.
         setActive(undefined);
+        setTags(TagUtils.getTags(active));
         body.current.style.display = "none";
         handleBackToList();
         return;
@@ -236,7 +237,9 @@ function NoteAppContainer() {
     },
 
     handleSelect: (e) => {
-      const selectedNote = NoteStorageUtils.getNoteById(e.target.id);
+      const selectedNote = NoteStorageUtils.getNoteById(
+        e.target.closest(".item").dataset.noteId //to prevent selecting error when clicking child element, find closest parent
+      );
       setActive(selectedNote);
       //putting active instead of selectedNote will lead to an weird behavior
       body.current.value = selectedNote.body;

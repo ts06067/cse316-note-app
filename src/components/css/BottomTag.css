@@ -1,6 +1,55 @@
 .bottomTag {
-  background-color: cadetblue;
+  background-color: lightgray;
   flex-basis: 100px;
   flex-shrink: 0;
   margin-top: auto;
+  border-bottom: none;
+}
+
+.ReactTags__tags {
+  padding: 5px;
+}
+
+.ReactTags__selected {
+  display: inline;
+  width: fit-content;
+  height: 40px;
+}
+
+.ReactTags__selected > span {
+  box-sizing: border-box;
+  display: inline-block;
+  background-color: rgba(255, 255, 255, 0.5);
+  border: 1.5px solid rgba(0, 0, 0, 0.3);
+  height: 100%;
+  margin: 5px;
+  padding: 0 5px 0 5px;
+  border-radius: 5px;
+}
+
+.ReactTags__selected > span > button {
+  background-color: transparent;
+  border: 1.5px solid gray;
+  height: 30px;
+  margin: 5px;
+  width: 30px;
+  border-radius: 3px;
+}
+
+.ReactTags__tagInput {
+  display: inline-block;
+  height: 40px;
+}
+
+.ReactTags__tagInput > input {
+  box-sizing: border-box;
+  height: 100%;
+  font-size: 12pt;
+  border: none;
+  border-radius: 5px;
+  margin: 5px;
+}
+
+.ReactTags__tagInput > input:focus {
+  outline: none !important;
 }

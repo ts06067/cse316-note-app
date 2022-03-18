@@ -13,15 +13,39 @@
 
 .container {
   display: flex;
-  min-height: 100vh;
+  height: 100vh;
+}
+
+.mainPanel {
+  background-color: var(--background-color);
+  border-bottom: var(--border-thickness) solid var(--border-color);
+}
+
+.mainPanel > div {
+  border-bottom: var(--border-thickness) solid var(--border-color);
+}
+
+.sidePanel {
+  border-right: var(--border-thickness) solid var(--border-color);
+  background-color: var(--background-color);
+}
+
+.sidePanel > div {
+  border-bottom: var(--border-thickness) solid var(--border-color);
 }
 
 .item {
-  background-color: var(--background-color);
+  border-bottom: var(--border-thickness) solid var(--border-color);
+}
+
+.item:hover {
+  cursor: pointer;
+  background-color: var(--selected-color);
 }
 
 .--selected {
   background-color: var(--selected-color);
+  font-weight: bold;
 }
 
 button {
@@ -30,10 +54,10 @@ button {
   border: none;
   border-radius: 10px;
   height: 50px;
-  min-width: 50px;
   font-size: 12pt;
   flex-shrink: 0;
   color: var(--text-color);
+  text-align: center;
 }
 
 button:hover {
