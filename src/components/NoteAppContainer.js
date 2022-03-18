@@ -24,6 +24,7 @@ function NoteAppContainer() {
 
   const [styleSideBar, setStyleSideBar] = useState({});
   const [styleEditor, setStyleEditor] = useState({});
+  const [styleProfileWindow, setStyleProfileWindow] = useState({});
 
   const [styleButton, setStyleButton] = useState({});
   //states for profile page
@@ -39,6 +40,8 @@ function NoteAppContainer() {
   //  handlers for Profile
   //
 
+  useEffect(() => handleProfileWindowSize(), [width]);
+
   useEffect(() => handleComponentVisibility(), [width]);
 
   useEffect(() => handleButtonVisibility(), [width]);
@@ -51,6 +54,17 @@ function NoteAppContainer() {
   //
   //  handlers for Window Action
   //
+
+  const handleProfileWindowSize = () => {
+    let mobile = width < 500 ? true : false;
+
+    let styleProfileWindow = {
+      width: mobile ? "100vw" : "450px",
+      height: mobile ? "100vh" : "auto",
+    };
+
+    setStyleProfileWindow(styleProfileWindow);
+  };
 
   const handleShowEditor = () => {
     let mobile = width < 500 ? true : false;
@@ -278,6 +292,7 @@ function NoteAppContainer() {
           inputProfileImage={inputProfileImage}
           inputProfileName={inputProfileName}
           inputProfileEmail={inputProfileEmail}
+          fullSize={styleProfileWindow}
         ></ProfilePage>
       )}
       <SidePanel

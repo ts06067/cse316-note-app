@@ -8,11 +8,13 @@ function ProfileForm(props) {
       ></input>
     */
   return (
-    <div className="formWrapper">
-      <h2>Edit Profile</h2>
-      <button className="btnClose" onClick={props.onOpenProfile}>
-        X
-      </button>
+    <div style={props.fullSize} className="formWrapper">
+      <div className="formTitle">
+        <h2>Edit Profile</h2>
+        <button className="btnClose" onClick={props.onOpenProfile}>
+          X
+        </button>
+      </div>
       <form className="form">
         <div className="input imageBox">
           <img

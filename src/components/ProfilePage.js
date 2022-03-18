@@ -5,6 +5,7 @@ function ProfilePage(props) {
   return (
     <div onClick={props.onOpenProfile} className={"background"}>
       <ProfileForm
+        fullSize={props.fullSize}
         profile={props.profile}
         onOpenProfile={props.onOpenProfile}
         onSaveProfile={props.onSaveProfile}

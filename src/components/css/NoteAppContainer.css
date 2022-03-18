@@ -71,6 +71,7 @@ button.btnSave {
 }
 
 button.btnClose {
+  width: 50px;
   font-size: 24pt;
 }
 
