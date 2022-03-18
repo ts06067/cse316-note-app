@@ -3,18 +3,30 @@ import SidePanel from "./SidePanel";
 import NoteStorageUtils from "../api/NoteStorageUtils";
 
 import "./css/NoteAppContainer.css";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import TagUtils from "../api/TagUtils";
 import ProfilePage from "./ProfilePage";
+import ProfileStorageUtils from "../api/ProfileStorageUtils";
 
 function NoteAppContainer() {
-  //states
+  //states for notes
   const [notes, setNotes] = useState(NoteStorageUtils.getNoteList());
   const [active, setActive] = useState(undefined);
   const [body, setBody] = useState("");
   const [tags, setTags] = useState(TagUtils.getTags(active));
 
+  //states for profile page
   const [showProfile, setShowProfile] = useState(false);
+  const [profile, setProfile] = useState(ProfileStorageUtils.getProfile());
+
+  //profile inputs
+  const inputProfileImage = useRef(null);
+  const inputProfileName = useRef(null);
+  const inputProfileEmail = useRef(null);
+
+  //
+  //  handlers for Profile
+  //
 
   //handlers
   const handleChange = (e) => {
@@ -27,7 +39,26 @@ function NoteAppContainer() {
 
   const handlerProfile = {
     handleOpenProfile: (e) => {
-      setShowProfile(!showProfile);
+      if (
+        e.target.className === "background" ||
+        e.target.className === "btnProfile" ||
+        e.target.className === "btnClose"
+      ) {
+        setShowProfile(!showProfile);
+      }
+    },
+    handleSaveProfile: (e) => {
+      e.preventDefault(); //prevents default submit action
+
+      let newProfile = {
+        image: "url",
+
+        name: inputProfileName.current.value,
+        email: inputProfileEmail.current.value,
+      };
+
+      ProfileStorageUtils.setProfile(newProfile);
+      setProfile(ProfileStorageUtils.getProfile());
     },
   };
 
@@ -149,7 +180,12 @@ function NoteAppContainer() {
     <div className="container">
       {showProfile && (
         <ProfilePage
+          profile={profile}
           onOpenProfile={handlerProfile.handleOpenProfile}
+          onSaveProfile={handlerProfile.handleSaveProfile}
+          inputProfileImage={inputProfileImage}
+          inputProfileName={inputProfileName}
+          inputProfileEmail={inputProfileEmail}
         ></ProfilePage>
       )}
       <SidePanel
