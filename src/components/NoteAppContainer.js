@@ -14,8 +14,9 @@ function NoteAppContainer() {
   //states for notes
   const [notes, setNotes] = useState(NoteStorageUtils.getNoteList());
   const [active, setActive] = useState(undefined);
-  const [body, setBody] = useState("");
   const [tags, setTags] = useState(TagUtils.getTags(active));
+
+  const body = useRef(null);
 
   const { width, height } = useWindowDimensions();
 
@@ -37,11 +38,6 @@ function NoteAppContainer() {
   //
   //  handlers for Profile
   //
-
-  //handlers
-  const handleChange = (e) => {
-    setBody(e.target.value);
-  };
 
   useEffect(() => handleComponentVisibility(), [width]);
 
@@ -200,8 +196,8 @@ function NoteAppContainer() {
       };
 
       //enable textarea
-      document.querySelector("textarea").style.display = "flex";
-      document.querySelector("textarea").focus();
+      body.current.style.display = "flex";
+      body.current.focus();
 
       //add the note to storage, then update the storage
       NoteStorageUtils.addNote(newNote);
@@ -209,7 +205,7 @@ function NoteAppContainer() {
 
       //auto select
       setActive(NoteStorageUtils.getLastNote());
-      setBody(NoteStorageUtils.getLastNote().body);
+      body.current.value = NoteStorageUtils.getLastNote().body;
       setTags(NoteStorageUtils.getLastNote().tags);
     },
 
@@ -224,16 +220,16 @@ function NoteAppContainer() {
       if (NoteStorageUtils.isEmpty()) {
         //if empty, disable textearea and deactivate selected note. otherwise, focus textarea.
         setActive(undefined);
-        document.querySelector("textarea").style.display = "none";
+        body.current.style.display = "none";
         handleBackToList();
         return;
-      } else {
-        document.querySelector("textarea").focus();
       }
+
+      body.current.focus();
 
       //auto select
       setActive(NoteStorageUtils.getFirstNote());
-      setBody(NoteStorageUtils.getFirstNote().body);
+      body.current.value = NoteStorageUtils.getFirstNote().body;
       setTags(NoteStorageUtils.getFirstNote().tags);
 
       handleBackToList();
@@ -242,13 +238,14 @@ function NoteAppContainer() {
     handleSelect: (e) => {
       const selectedNote = NoteStorageUtils.getNoteById(e.target.id);
       setActive(selectedNote);
-      setBody(selectedNote.body); //putting active instead of selectedNote will lead to an weird behavior
+      //putting active instead of selectedNote will lead to an weird behavior
+      body.current.value = selectedNote.body;
       setTags(TagUtils.getTags(selectedNote));
 
       handleShowEditor();
 
-      document.querySelector("textarea").style.display = "flex";
-      document.querySelector("textarea").focus();
+      body.current.style.display = "flex";
+      body.current.focus();
     },
 
     handleEdit: (e) => {
@@ -258,13 +255,13 @@ function NoteAppContainer() {
 
       const edittedNote = active;
 
-      edittedNote.body = body;
-      edittedNote.date = Date.now();
+      if (edittedNote.body !== body.current.value) {
+        edittedNote.body = body.current.value;
+        edittedNote.date = Date.now();
 
-      setActive(edittedNote);
-
-      NoteStorageUtils.updateNote(edittedNote, body);
-      setNotes(NoteStorageUtils.getNoteList());
+        NoteStorageUtils.updateNote(edittedNote, body.current.value);
+        setNotes(NoteStorageUtils.getNoteList());
+      }
     },
   };
 
@@ -291,7 +288,6 @@ function NoteAppContainer() {
       <MainPanel
         body={body}
         tags={tags}
-        onChangeBody={handleChange}
         onDelete={handlers.handleDelete}
         onEdit={handlers.handleEdit}
         onAddTag={handlerTags.handleAddTag}

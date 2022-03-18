@@ -12,7 +12,6 @@ function MainPanel(props) {
         visible={props.visibleButton}
       ></TopBarRight>
       <TextBody
-        onChangeBody={props.onChangeBody}
         onEdit={props.onEdit}
         body={props.body}
         focus={props.focus}
