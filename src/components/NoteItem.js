@@ -21,7 +21,11 @@ function NoteItem(props) {
 }
 
 function formatString(str) {
-  return str.slice(0, 30) + "...";
+  return str.length >= 30
+    ? str.slice(0, 30) + "..."
+    : str.length > 0
+    ? str
+    : "No Text";
 }
 
 function formatDate(date) {

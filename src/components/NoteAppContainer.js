@@ -231,9 +231,9 @@ function NoteAppContainer() {
       setNotes(NoteStorageUtils.getNoteList());
 
       //auto select
-      setActive(NoteStorageUtils.getLastNote());
-      body.current.value = NoteStorageUtils.getLastNote().body;
-      setTags(NoteStorageUtils.getLastNote().tags);
+      setActive(NoteStorageUtils.getFirstNote());
+      body.current.value = NoteStorageUtils.getFirstNote().body;
+      setTags(NoteStorageUtils.getFirstNote().tags);
     },
 
     handleDelete: (e) => {

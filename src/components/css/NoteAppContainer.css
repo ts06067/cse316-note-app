@@ -11,6 +11,10 @@
   --border-thickness: 1.5px;
 }
 
+* {
+  user-select: none;
+}
+
 .container {
   display: flex;
   height: 100vh;
