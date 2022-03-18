@@ -1,3 +1,21 @@
 .searchBar {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
   height: 50px;
+}
+
+.searchIcon {
+  flex-basis: 50px;
+  flex-shrink: 0;
+  text-align: center;
+}
+
+.searchBox {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  box-sizing: border-box;
+  border: none;
+  font-size: 14pt;
 }

@@ -6,3 +6,7 @@
   flex-basis: 50px;
   flex-shrink: 0;
 }
+
+.title {
+  font-size: 14pt;
+}

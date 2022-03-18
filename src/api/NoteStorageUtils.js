@@ -1,6 +1,6 @@
 export default class NoteStorageUtils {
   static getNoteList() {
-    let newNoteList = JSON.parse(sessionStorage.getItem("notes-storage"));
+    let newNoteList = JSON.parse(localStorage.getItem("notes-storage"));
     newNoteList = newNoteList === null ? [] : newNoteList;
 
     newNoteList = newNoteList.sort((a, b) => (a.date < b.date ? 1 : -1));
@@ -9,7 +9,7 @@ export default class NoteStorageUtils {
   }
 
   static setNoteList(newNoteList) {
-    sessionStorage.setItem("notes-storage", JSON.stringify(newNoteList));
+    localStorage.setItem("notes-storage", JSON.stringify(newNoteList));
   }
 
   static addNote(note) {

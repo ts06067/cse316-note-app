@@ -17,6 +17,7 @@ function NoteAppContainer() {
   const [tags, setTags] = useState(TagUtils.getTags(active));
 
   const body = useRef(null);
+  const tagsRef = useRef(null);
 
   const { width, height } = useWindowDimensions();
 
@@ -35,6 +36,7 @@ function NoteAppContainer() {
   const inputProfileImage = useRef(null);
   const inputProfileName = useRef(null);
   const inputProfileEmail = useRef(null);
+  const inputProfileColorScheme = useRef(null);
 
   //
   //  handlers for Profile
@@ -49,6 +51,16 @@ function NoteAppContainer() {
   useEffect(
     () => (active === undefined ? setEditMode(false) : setEditMode(true)),
     [active]
+  );
+
+  useEffect(
+    () => (body.current.style.display = editMode ? "block" : "none"),
+    [editMode]
+  );
+
+  useEffect(
+    () => (tagsRef.current.style.display = editMode ? "block" : "none"),
+    [editMode]
   );
 
   //
@@ -141,6 +153,7 @@ function NoteAppContainer() {
 
         name: inputProfileName.current.value,
         email: inputProfileEmail.current.value,
+        colorScheme: inputProfileColorScheme.current.value,
       };
 
       ProfileStorageUtils.setProfile(newProfile);
@@ -292,6 +305,7 @@ function NoteAppContainer() {
           inputProfileImage={inputProfileImage}
           inputProfileName={inputProfileName}
           inputProfileEmail={inputProfileEmail}
+          inputProfileColorScheme={inputProfileColorScheme}
           fullSize={styleProfileWindow}
         ></ProfilePage>
       )}
@@ -307,6 +321,7 @@ function NoteAppContainer() {
       <MainPanel
         body={body}
         tags={tags}
+        tagsRef={tagsRef}
         onDelete={handlers.handleDelete}
         onEdit={handlers.handleEdit}
         onAddTag={handlerTags.handleAddTag}

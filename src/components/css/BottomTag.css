@@ -32,8 +32,13 @@
   border: 1.5px solid gray;
   height: 30px;
   margin: 5px;
+  min-width: unset;
   width: 30px;
   border-radius: 3px;
+}
+
+.ReactTags__selected > span > button:hover {
+  background-color: rgba(0, 0, 0, 0.3);
 }
 
 .ReactTags__tagInput {

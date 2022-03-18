@@ -12,6 +12,7 @@ function ProfilePage(props) {
         inputProfileImage={props.inputProfileImage}
         inputProfileName={props.inputProfileName}
         inputProfileEmail={props.inputProfileEmail}
+        inputProfileColorScheme={props.inputProfileColorScheme}
       ></ProfileForm>
     </div>
   );

@@ -54,6 +54,7 @@ button {
   border: none;
   border-radius: 10px;
   height: 50px;
+  min-width: 50px;
   font-size: 12pt;
   flex-shrink: 0;
   color: var(--text-color);
@@ -62,6 +63,16 @@ button {
 
 button:hover {
   background-color: var(--selected-color);
+  cursor: pointer;
+}
+
+img.btnProfile {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+}
+
+img.btnProfile:hover {
   cursor: pointer;
 }
 
@@ -79,4 +90,9 @@ button.btnSave:hover {
   background-color: var(--selected-color);
   color: var(--text-color);
   cursor: pointer;
+}
+
+.imgProfile {
+  width: 50px;
+  height: 50px;
 }

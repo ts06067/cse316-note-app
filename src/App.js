@@ -1,4 +1,5 @@
 import "./App.css";
+
 import NoteAppContainer from "./components/NoteAppContainer";
 
 function App() {

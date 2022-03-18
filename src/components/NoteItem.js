@@ -21,7 +21,7 @@ function NoteItem(props) {
 }
 
 function formatString(str) {
-  return str.slice(0, 15) + "...";
+  return str.slice(0, 30) + "...";
 }
 
 function formatDate(date) {

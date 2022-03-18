@@ -18,6 +18,7 @@ function MainPanel(props) {
       ></TextBody>
       <BottomTag
         tags={props.tags}
+        tagsRef={props.tagsRef}
         onAddTag={props.onAddTag}
         onDeleteTag={props.onDeleteTag}
         onDragTag={props.onDragTag}

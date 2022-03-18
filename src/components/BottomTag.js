@@ -10,7 +10,7 @@ function BottomTag(props) {
   const delimiters = [KeyCodes.comma, KeyCodes.enter];
 
   return (
-    <div className="bottomTag">
+    <div ref={props.tagsRef} className="bottomTag">
       <ReactTags
         tags={props.tags}
         delimiters={delimiters}

@@ -44,7 +44,12 @@ function ProfileForm(props) {
         ></input>
 
         <label htmlFor="userColorScheme">Color Scheme</label>
-        <select className="input" name="colorScheme" id="colorScheme">
+        <select
+          className="input"
+          ref={props.inputProfileColorScheme}
+          defaultValue={props.profile.colorScheme}
+          name="colorScheme"
+        >
           <option value="light">Light</option>
           <option value="dark">Dark</option>
         </select>
