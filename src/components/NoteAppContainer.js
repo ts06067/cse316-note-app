@@ -71,6 +71,12 @@ function NoteAppContainer() {
   };
 
   const handleBackToList = () => {
+    let mobile = width < 500 ? true : false;
+
+    if (!mobile) {
+      return;
+    }
+
     let styleSideBar = { display: "flex", flexBasis: "100vw" };
     let styleEditor = { display: "none", flexBasis: "100vw" };
 
@@ -209,7 +215,6 @@ function NoteAppContainer() {
 
     handleDelete: (e) => {
       if (active === undefined) {
-        handleBackToList();
         return;
       }
 
@@ -220,6 +225,7 @@ function NoteAppContainer() {
         //if empty, disable textearea and deactivate selected note. otherwise, focus textarea.
         setActive(undefined);
         document.querySelector("textarea").style.display = "none";
+        handleBackToList();
         return;
       } else {
         document.querySelector("textarea").focus();
