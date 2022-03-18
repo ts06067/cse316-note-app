@@ -284,6 +284,7 @@ function NoteAppContainer() {
         onSelect={handlers.handleSelect}
         visible={styleSideBar}
         onOpenProfile={handlerProfile.handleOpenProfile}
+        height={height}
       ></SidePanel>
       <MainPanel
         body={body}

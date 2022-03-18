@@ -11,14 +11,16 @@ function SidePanel(props) {
         onOpenProfile={props.onOpenProfile}
       ></TopBarLeft>
       <SearchBar></SearchBar>
-      {props.notes.map((note) => (
-        <NoteItem
-          key={note.id}
-          onClick={props.onSelect}
-          note={note}
-          active={props.active}
-        ></NoteItem>
-      ))}
+      <div className="noteListWrapper" style={{ height: props.height - 100 }}>
+        {props.notes.map((note) => (
+          <NoteItem
+            key={note.id}
+            onClick={props.onSelect}
+            note={note}
+            active={props.active}
+          ></NoteItem>
+        ))}
+      </div>
     </div>
   );
 }

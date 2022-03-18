@@ -5,3 +5,9 @@
   flex-basis: 300px;
   flex-shrink: 0;
 }
+
+.noteListWrapper {
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
