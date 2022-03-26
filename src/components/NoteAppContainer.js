@@ -1,4 +1,5 @@
 import { useEffect, useState, useRef } from "react";
+import axios from "axios";
 
 //virtual DOM
 import MainPanel from "./MainPanel";
@@ -233,6 +234,15 @@ function NoteAppContainer() {
 
   const handlers = {
     handleAdd: (e) => {
+      axios
+        .get("http://localhost:5000/notes/")
+        .then((response) => {
+          console.log(response.data);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+
       //init new note
       const newNote = {
         id: Math.floor(Math.random() * 10000),
