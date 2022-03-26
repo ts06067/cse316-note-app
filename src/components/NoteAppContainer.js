@@ -1,72 +1,82 @@
+import { useEffect, useState, useRef } from "react";
+
+//virtual DOM
 import MainPanel from "./MainPanel";
 import SidePanel from "./SidePanel";
-import NoteStorageUtils from "../api/NoteStorageUtils";
-
-import "./css/NoteAppContainer.css";
-import { useEffect, useState, useRef } from "react";
 import TagUtils from "../api/TagUtils";
 import ProfilePage from "./ProfilePage";
+
+//apis: note and profile storages
+import NoteStorageUtils from "../api/NoteStorageUtils";
 import ProfileStorageUtils from "../api/ProfileStorageUtils";
 
+//user-defined hook for handling window size change
 import useWindowDimensions from "./WindowDimensions.js";
 
+import "./css/NoteAppContainer.css";
+
 function NoteAppContainer() {
-  //states for notes
+  //states for notelist / active note / tags for the active note
   const [notes, setNotes] = useState(NoteStorageUtils.getNoteList());
   const [active, setActive] = useState(undefined);
   const [tags, setTags] = useState(TagUtils.getTags(active));
 
+  //body, tags elements
   const body = useRef(null);
   const tagsRef = useRef(null);
 
-  const { width, height } = useWindowDimensions();
-
-  const [editMode, setEditMode] = useState(false);
-
-  const [styleSideBar, setStyleSideBar] = useState({});
-  const [styleEditor, setStyleEditor] = useState({});
-  const [styleProfileWindow, setStyleProfileWindow] = useState({});
-
-  const [styleButton, setStyleButton] = useState({});
-  //states for profile page
-  const [showProfile, setShowProfile] = useState(false);
-  const [profile, setProfile] = useState(ProfileStorageUtils.getProfile());
-
-  //profile inputs
+  //profile input elements
   const inputProfileImage = useRef(null);
   const inputProfileName = useRef(null);
   const inputProfileEmail = useRef(null);
   const inputProfileColorScheme = useRef(null);
 
-  //
-  //  handlers for Profile
-  //
+  //window width and height for mobile responsiveness
+  const { width, height } = useWindowDimensions();
+  //in mobile size, clicking an item in note list will get to editor mode, by toggling editMode.
+  const [editMode, setEditMode] = useState(false);
 
+  //states for profile page
+  const [showProfile, setShowProfile] = useState(false);
+  const [profile, setProfile] = useState(ProfileStorageUtils.getProfile());
+
+  //css properties for sidebar / text editor / profile popup window
+  const [styleSideBar, setStyleSideBar] = useState({});
+  const [styleEditor, setStyleEditor] = useState({});
+  const [styleProfileWindow, setStyleProfileWindow] = useState({});
+
+  //css property for 'back button', because the button will appear only in mobile size.
+  const [styleButton, setStyleButton] = useState({});
+
+  //handle mobile responsiveness whenever width changes.
   useEffect(() => handleProfileWindowSize(), [width]);
-
   useEffect(() => handleComponentVisibility(), [width]);
-
   useEffect(() => handleButtonVisibility(), [width]);
 
+  //in mobile size, if there is no active note, it does not open text editor.
   useEffect(
     () => (active === undefined ? setEditMode(false) : setEditMode(true)),
     [active]
   );
 
+  //if editMode == true, display text body and corresponding tags in the text editor.
   useEffect(
     () => (body.current.style.display = editMode ? "block" : "none"),
     [editMode]
   );
-
   useEffect(
     () => (tagsRef.current.style.display = editMode ? "block" : "none"),
     [editMode]
   );
 
-  //
-  //  handlers for Window Action
-  //
+  /*
+    handlers for various events when window size changes,
+    which includes: 
+    adjusting profile window size, and
+    displaying of sidebar (note list) & text editor, or any other elements, in mobile/desktop mode.
+  */
 
+  //handles profile window size (full screen / small popup)
   const handleProfileWindowSize = () => {
     let mobile = width < 500 ? true : false;
 
@@ -78,6 +88,7 @@ function NoteAppContainer() {
     setStyleProfileWindow(styleProfileWindow);
   };
 
+  //handles displaying of text editor when clicked a note item, in mobile size.
   const handleShowEditor = () => {
     let mobile = width < 500 ? true : false;
 
@@ -92,6 +103,7 @@ function NoteAppContainer() {
     setStyleEditor(styleEditor);
   };
 
+  //handles displaying of note list when clicked a back button, in mobile size.
   const handleBackToList = () => {
     let mobile = width < 500 ? true : false;
 
@@ -106,12 +118,16 @@ function NoteAppContainer() {
     setStyleEditor(styleEditor);
   };
 
+  //handles visibility of back button. It will show only in mobile size.
   const handleButtonVisibility = () => {
     let mobile = width < 500 ? true : false;
 
     setStyleButton({ display: mobile ? "flex" : "none" });
   };
 
+  //handles visibility of note sidebar (note list) & text editor.
+  //Either sidebar or editor must show in mobile.
+  //If editMode == true, it will show full-size text editor. Otherwise, it will show full-size sidebar (note list).
   const handleComponentVisibility = () => {
     let mobile = width < 500 ? true : false;
 
@@ -131,11 +147,12 @@ function NoteAppContainer() {
     setStyleEditor(styleEditor);
   };
 
-  //
-  //  handlers for Windows Visibility
-  //
+  /*
+    handlers for profile: open profile window, update profile data.
+  */
 
   const handlerProfile = {
+    //if clicked background, profile image button, or 'close (X)' button, then close the profile window.
     handleOpenProfile: (e) => {
       if (
         e.target.className === "background" ||
@@ -145,6 +162,7 @@ function NoteAppContainer() {
         setShowProfile(!showProfile);
       }
     },
+    //update profile when clicking 'save' button.
     handleSaveProfile: (e) => {
       e.preventDefault(); //prevents default submit action
 
@@ -161,9 +179,9 @@ function NoteAppContainer() {
     },
   };
 
-  //
-  //  handlers for Tags
-  //
+  /*
+    handlers for tags: add / delete / drag tags of an active note.
+  */
 
   const handlerTags = {
     handleAddTag: (tag) => {
@@ -209,9 +227,9 @@ function NoteAppContainer() {
     },
   };
 
-  //
-  //  handlers for Notes
-  //
+  /*
+    handlers for notes: add / delete / edit
+  */
 
   const handlers = {
     handleAdd: (e) => {
@@ -255,12 +273,12 @@ function NoteAppContainer() {
 
       body.current.focus();
 
-      //auto select
+      //automatically activate the first note
       setActive(NoteStorageUtils.getFirstNote());
       body.current.value = NoteStorageUtils.getFirstNote().body;
       setTags(NoteStorageUtils.getFirstNote().tags);
 
-      handleBackToList();
+      handleBackToList(); //this will get back to note list after deleting, only in mobile size.
     },
 
     handleSelect: (e) => {
@@ -268,7 +286,7 @@ function NoteAppContainer() {
         e.target.closest(".item").dataset.noteId //to prevent selecting error when clicking child element, find closest parent
       );
       setActive(selectedNote);
-      //putting active instead of selectedNote will lead to an weird behavior
+      //putting active instead of selectedNote will lead to an weird behavior (active note was not properly updated)
       body.current.value = selectedNote.body;
       setTags(TagUtils.getTags(selectedNote));
 
