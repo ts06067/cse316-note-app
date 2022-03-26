@@ -8,6 +8,7 @@ function TopBarLeft(props) {
         className={"btnProfile"}
         onClick={props.onOpenProfile}
         src={profileImage}
+        alt={"profile"}
       ></img>
       <div className="title">My Notes</div>
       <button onClick={props.onAdd}>
