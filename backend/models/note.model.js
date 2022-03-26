@@ -12,6 +12,11 @@ const noteSchema = new Schema(
       type: Date,
       required: true,
     },
+    tags: {
+      type: Array,
+      required: true,
+      default: [],
+    },
   },
   {
     timestamps: true,
