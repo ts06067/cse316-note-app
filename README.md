@@ -4,6 +4,7 @@ All notes and profile data are stored in your browser's localStorage.
 They are not sync to an external database, which will be implemented soon.
 
 ### Built With
+* Node.js
 * React.js
 
 ## Getting Started
