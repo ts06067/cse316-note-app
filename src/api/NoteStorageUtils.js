@@ -2,31 +2,19 @@ import axios from "axios";
 
 export default class NoteStorageUtils {
   static getNoteList() {
+    let noteList = [];
     axios
       .get("http://localhost:5000/notes/")
       .then((response) => {
-        let newNoteList = response.data;
+        noteList = response.data;
 
-        newNoteList = newNoteList === null ? [] : newNoteList;
-
-        newNoteList = newNoteList.sort((a, b) =>
+        noteList = noteList.sort((a, b) =>
           a.lastUpdatedDate < b.lastUpdatedDate ? 1 : -1
         );
-
-        //console.log(newNoteList[0]._id);
       })
       .catch((error) => {
         console.log(error);
       });
-
-    let newNoteList = JSON.parse(sessionStorage.getItem("notes-storage"));
-    newNoteList = newNoteList === null ? [] : newNoteList;
-
-    newNoteList = newNoteList.sort((a, b) =>
-      a.lastUpdatedDate < b.lastUpdatedDate ? 1 : -1
-    );
-
-    return newNoteList;
   }
 
   static setNoteList(newNoteList) {
@@ -34,22 +22,22 @@ export default class NoteStorageUtils {
   }
 
   static addNote(note) {
-    axios.post("http://localhost:5000/notes/add", note);
-
-    const notes = this.getNoteList() || [];
-    notes.push(note);
-    this.setNoteList(notes);
+    axios
+      .post("http://localhost:5000/notes/add/", note)
+      .then((res) => console.log(res.data));
   }
 
   static delNote(toDelete) {
-    let notes = this.getNoteList() || [];
-    notes = notes.filter((note) => parseInt(note.id) !== parseInt(toDelete.id));
-    this.setNoteList(notes);
+    axios
+      .delete("http://localhost:5000/notes/" + toDelete._id)
+      .then((response) => {
+        console.log(response.data);
+      });
   }
 
   static getNoteById(id) {
     const notes = this.getNoteList();
-    const found = notes.find((note) => parseInt(note.id) === parseInt(id));
+    const found = notes.find((note) => parseInt(note._id) === parseInt(id));
     return found;
   }
 
@@ -68,24 +56,20 @@ export default class NoteStorageUtils {
   }
 
   static updateNote(noteToUpdate, text) {
-    const notes = this.getNoteList();
-    notes.forEach((note) => {
-      if (note.id === noteToUpdate.id) {
-        note.text = text;
-        note.lastUpdatedDate = noteToUpdate.lastUpdatedDate;
-      }
-    });
-    this.setNoteList(notes);
+    noteToUpdate.text = text;
+    noteToUpdate.lastUpdatedDate = new Date(Date.now()).toISOString();
+
+    axios
+      .post("http://localhost:5000/update" + noteToUpdate._id, noteToUpdate)
+      .then((res) => console.log(res.data));
   }
 
   static updateTags(noteToUpdate, tags) {
-    const notes = this.getNoteList();
-    notes.forEach((note) => {
-      if (note.id === noteToUpdate.id) {
-        note.tags = tags;
-      }
-    });
-    this.setNoteList(notes);
+    noteToUpdate.tags = tags;
+
+    axios
+      .post("http://localhost:5000/update" + noteToUpdate._id, noteToUpdate)
+      .then((res) => console.log(res.data));
   }
 
   static isEmpty() {

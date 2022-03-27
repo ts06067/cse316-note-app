@@ -15,12 +15,13 @@ import ProfileStorageUtils from "../api/ProfileStorageUtils";
 import useWindowDimensions from "./WindowDimensions.js";
 
 import "./css/NoteAppContainer.css";
+import { response } from "express";
 
 function NoteAppContainer() {
   //states for notelist / active note / tags for the active note
-  const [notes, setNotes] = useState(NoteStorageUtils.getNoteList());
+  const [notes, setNotes] = useState([]);
   const [active, setActive] = useState(undefined);
-  const [tags, setTags] = useState(TagUtils.getTags(active));
+  const [tags, setTags] = useState([]);
 
   //body, tags elements
   const text = useRef(null);
@@ -54,6 +55,26 @@ function NoteAppContainer() {
   useEffect(() => handleComponentVisibility(), [width]);
   useEffect(() => handleButtonVisibility(), [width]);
 
+  useEffect(() => {
+    //hook version of ComponentDidMount
+    axios
+      .get("http://localhost:5000/notes/")
+      .then((response) => {
+        let noteList = response.data;
+        noteList = noteList.sort((a, b) =>
+          a.lastUpdatedDate < b.lastUpdatedDate ? 1 : -1
+        );
+        setNotes(noteList);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }, []);
+
+  useEffect(() => {
+    console.log(notes);
+  });
+
   //in mobile size, if there is no active note, it does not open text editor.
   useEffect(
     () => (active === undefined ? setEditMode(false) : setEditMode(true)),
@@ -69,7 +90,6 @@ function NoteAppContainer() {
     () => (tagsRef.current.style.display = editMode ? "block" : "none"),
     [editMode]
   );
-
   /*
     handlers for various events when window size changes,
     which includes: 
@@ -234,25 +254,21 @@ function NoteAppContainer() {
 
   const handlers = {
     handleAdd: (e) => {
-      //init new note
-      const newNote = {
-        id: Math.floor(Math.random() * 10000),
-        text: "New Note...",
-        lastUpdatedDate: Date.now(),
-      };
+      axios
+        .post("http://localhost:5000/notes/add/", {
+          text: "New Note...",
+          lastUpdatedDate: new Date(Date.now()).toISOString(),
+        })
+        .then((res) => {
+          console.log(res.data);
 
-      //enable textarea
-      text.current.style.display = "flex";
-      text.current.focus();
+          text.current.style.display = "flex";
+          text.current.focus();
 
-      //add the note to storage, then update the storage
-      NoteStorageUtils.addNote(newNote);
-      setNotes(NoteStorageUtils.getNoteList());
-
-      //auto select
-      setActive(NoteStorageUtils.getFirstNote());
-      text.current.value = NoteStorageUtils.getFirstNote().text;
-      setTags(NoteStorageUtils.getFirstNote().tags);
+          setActive(notes[0]);
+          setTags(notes[0].tags);
+          text.current.value = notes[0].text;
+        });
     },
 
     handleDelete: (e) => {

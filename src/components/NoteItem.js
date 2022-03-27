@@ -4,9 +4,9 @@ function NoteItem(props) {
   return (
     <div
       onClick={props.onClick}
-      data-note-id={props.note.id}
+      data-note-id={props.note._id}
       className={
-        props.active !== undefined && props.note.id === props.active.id
+        props.active !== undefined && props.note._id === props.active._id
           ? "item --selected"
           : "item"
       }
