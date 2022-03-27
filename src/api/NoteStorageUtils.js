@@ -1,15 +1,28 @@
+import axios from "axios";
+
 export default class NoteStorageUtils {
   static getNoteList() {
-    let newNoteList = JSON.parse(localStorage.getItem("notes-storage"));
+    axios
+      .get("http://localhost:5000/notes/")
+      .then((response) => {
+        console.log(response.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+
+    let newNoteList = JSON.parse(sessionStorage.getItem("notes-storage"));
     newNoteList = newNoteList === null ? [] : newNoteList;
 
-    newNoteList = newNoteList.sort((a, b) => (a.date < b.date ? 1 : -1));
+    newNoteList = newNoteList.sort((a, b) =>
+      a.lastUpdatedDate < b.lastUpdatedDate ? 1 : -1
+    );
 
     return newNoteList;
   }
 
   static setNoteList(newNoteList) {
-    localStorage.setItem("notes-storage", JSON.stringify(newNoteList));
+    sessionStorage.setItem("notes-storage", JSON.stringify(newNoteList));
   }
 
   static addNote(note) {
@@ -49,7 +62,7 @@ export default class NoteStorageUtils {
     notes.forEach((note) => {
       if (note.id === noteToUpdate.id) {
         note.body = body;
-        note.date = noteToUpdate.date;
+        note.lastUpdatedDate = noteToUpdate.lastUpdatedDate;
       }
     });
     this.setNoteList(notes);

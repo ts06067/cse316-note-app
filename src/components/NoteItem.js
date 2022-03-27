@@ -15,7 +15,9 @@ function NoteItem(props) {
         {formatString(props.note.body)}
         <br></br>{" "}
       </span>
-      <span style={{ fontSize: 14 }}>{"\n" + formatDate(props.note.date)}</span>
+      <span style={{ fontSize: 14 }}>
+        {"\n" + formatDate(props.note.lastUpdatedDate)}
+      </span>
     </div>
   );
 }

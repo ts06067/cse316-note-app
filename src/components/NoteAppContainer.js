@@ -234,20 +234,11 @@ function NoteAppContainer() {
 
   const handlers = {
     handleAdd: (e) => {
-      axios
-        .get("http://localhost:5000/notes/")
-        .then((response) => {
-          console.log(response.data);
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-
       //init new note
       const newNote = {
         id: Math.floor(Math.random() * 10000),
         body: "New Note...",
-        date: Date.now(),
+        lastUpdatedDate: Date.now(),
       };
 
       //enable textarea
@@ -315,7 +306,7 @@ function NoteAppContainer() {
 
       if (edittedNote.body !== body.current.value) {
         edittedNote.body = body.current.value;
-        edittedNote.date = Date.now();
+        edittedNote.lastUpdatedDate = Date.now();
 
         NoteStorageUtils.updateNote(edittedNote, body.current.value);
         setNotes(NoteStorageUtils.getNoteList());
