@@ -12,7 +12,7 @@ function NoteItem(props) {
       }
     >
       <span style={{ fontSize: 18 }}>
-        {formatString(props.note.body)}
+        {formatString(props.note.text)}
         <br></br>{" "}
       </span>
       <span style={{ fontSize: 14 }}>

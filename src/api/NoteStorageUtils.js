@@ -5,7 +5,15 @@ export default class NoteStorageUtils {
     axios
       .get("http://localhost:5000/notes/")
       .then((response) => {
-        console.log(response.data);
+        let newNoteList = response.data;
+
+        newNoteList = newNoteList === null ? [] : newNoteList;
+
+        newNoteList = newNoteList.sort((a, b) =>
+          a.lastUpdatedDate < b.lastUpdatedDate ? 1 : -1
+        );
+
+        //console.log(newNoteList[0]._id);
       })
       .catch((error) => {
         console.log(error);
@@ -26,6 +34,8 @@ export default class NoteStorageUtils {
   }
 
   static addNote(note) {
+    axios.post("http://localhost:5000/notes/add", note);
+
     const notes = this.getNoteList() || [];
     notes.push(note);
     this.setNoteList(notes);
@@ -57,11 +67,11 @@ export default class NoteStorageUtils {
     return this.getNote(last);
   }
 
-  static updateNote(noteToUpdate, body) {
+  static updateNote(noteToUpdate, text) {
     const notes = this.getNoteList();
     notes.forEach((note) => {
       if (note.id === noteToUpdate.id) {
-        note.body = body;
+        note.text = text;
         note.lastUpdatedDate = noteToUpdate.lastUpdatedDate;
       }
     });

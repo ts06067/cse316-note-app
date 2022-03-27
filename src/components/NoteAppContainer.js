@@ -23,7 +23,7 @@ function NoteAppContainer() {
   const [tags, setTags] = useState(TagUtils.getTags(active));
 
   //body, tags elements
-  const body = useRef(null);
+  const text = useRef(null);
   const tagsRef = useRef(null);
 
   //profile input elements
@@ -62,7 +62,7 @@ function NoteAppContainer() {
 
   //if editMode == true, display text body and corresponding tags in the text editor.
   useEffect(
-    () => (body.current.style.display = editMode ? "block" : "none"),
+    () => (text.current.style.display = editMode ? "block" : "none"),
     [editMode]
   );
   useEffect(
@@ -237,13 +237,13 @@ function NoteAppContainer() {
       //init new note
       const newNote = {
         id: Math.floor(Math.random() * 10000),
-        body: "New Note...",
+        text: "New Note...",
         lastUpdatedDate: Date.now(),
       };
 
       //enable textarea
-      body.current.style.display = "flex";
-      body.current.focus();
+      text.current.style.display = "flex";
+      text.current.focus();
 
       //add the note to storage, then update the storage
       NoteStorageUtils.addNote(newNote);
@@ -251,7 +251,7 @@ function NoteAppContainer() {
 
       //auto select
       setActive(NoteStorageUtils.getFirstNote());
-      body.current.value = NoteStorageUtils.getFirstNote().body;
+      text.current.value = NoteStorageUtils.getFirstNote().text;
       setTags(NoteStorageUtils.getFirstNote().tags);
     },
 
@@ -267,16 +267,16 @@ function NoteAppContainer() {
         //if empty, disable textearea and deactivate selected note. otherwise, focus textarea.
         setActive(undefined);
         setTags(TagUtils.getTags(active));
-        body.current.style.display = "none";
+        text.current.style.display = "none";
         handleBackToList();
         return;
       }
 
-      body.current.focus();
+      text.current.focus();
 
       //automatically activate the first note
       setActive(NoteStorageUtils.getFirstNote());
-      body.current.value = NoteStorageUtils.getFirstNote().body;
+      text.current.value = NoteStorageUtils.getFirstNote().text;
       setTags(NoteStorageUtils.getFirstNote().tags);
 
       handleBackToList(); //this will get back to note list after deleting, only in mobile size.
@@ -288,13 +288,13 @@ function NoteAppContainer() {
       );
       setActive(selectedNote);
       //putting active instead of selectedNote will lead to an weird behavior (active note was not properly updated)
-      body.current.value = selectedNote.body;
+      text.current.value = selectedNote.text;
       setTags(TagUtils.getTags(selectedNote));
 
       handleShowEditor();
 
-      body.current.style.display = "flex";
-      body.current.focus();
+      text.current.style.display = "flex";
+      text.current.focus();
     },
 
     handleEdit: (e) => {
@@ -304,11 +304,11 @@ function NoteAppContainer() {
 
       const edittedNote = active;
 
-      if (edittedNote.body !== body.current.value) {
-        edittedNote.body = body.current.value;
+      if (edittedNote.text !== text.current.value) {
+        edittedNote.text = text.current.value;
         edittedNote.lastUpdatedDate = Date.now();
 
-        NoteStorageUtils.updateNote(edittedNote, body.current.value);
+        NoteStorageUtils.updateNote(edittedNote, text.current.value);
         setNotes(NoteStorageUtils.getNoteList());
       }
     },
@@ -338,7 +338,7 @@ function NoteAppContainer() {
         height={height}
       ></SidePanel>
       <MainPanel
-        body={body}
+        text={text}
         tags={tags}
         tagsRef={tagsRef}
         onDelete={handlers.handleDelete}
