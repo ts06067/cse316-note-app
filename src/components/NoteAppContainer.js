@@ -4,18 +4,14 @@ import axios from "axios";
 //virtual DOM
 import MainPanel from "./MainPanel";
 import SidePanel from "./SidePanel";
-import TagUtils from "../api/TagUtils";
 import ProfilePage from "./ProfilePage";
 
 //apis: note and profile storages
-import NoteStorageUtils from "../api/NoteStorageUtils";
-import ProfileStorageUtils from "../api/ProfileStorageUtils";
 
 //user-defined hook for handling window size change
 import useWindowDimensions from "./WindowDimensions.js";
 
 import "./css/NoteAppContainer.css";
-import { act } from "react-dom/test-utils";
 
 function NoteAppContainer() {
   //states for notelist / active note / tags for the active note
