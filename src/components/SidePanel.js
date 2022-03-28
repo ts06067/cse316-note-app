@@ -12,7 +12,6 @@ function SidePanel(props) {
       ></TopBarLeft>
       <SearchBar></SearchBar>
       <div className="noteListWrapper" style={{ height: props.height - 100 }}>
-        {console.log("rendering sidebar...")}
         {props.notes &&
           props.notes.map((note) => (
             <NoteItem

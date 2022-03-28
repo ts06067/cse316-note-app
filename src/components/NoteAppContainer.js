@@ -15,7 +15,6 @@ import ProfileStorageUtils from "../api/ProfileStorageUtils";
 import useWindowDimensions from "./WindowDimensions.js";
 
 import "./css/NoteAppContainer.css";
-import { response } from "express";
 
 function NoteAppContainer() {
   //states for notelist / active note / tags for the active note
@@ -56,7 +55,6 @@ function NoteAppContainer() {
   useEffect(() => handleButtonVisibility(), [width]);
 
   useEffect(() => {
-    //hook version of ComponentDidMount
     axios
       .get("http://localhost:5000/notes/")
       .then((response) => {
@@ -70,10 +68,6 @@ function NoteAppContainer() {
         console.log(error);
       });
   }, []);
-
-  useEffect(() => {
-    console.log(notes);
-  });
 
   //in mobile size, if there is no active note, it does not open text editor.
   useEffect(
@@ -254,6 +248,7 @@ function NoteAppContainer() {
 
   const handlers = {
     handleAdd: (e) => {
+      //post
       axios
         .post("http://localhost:5000/notes/add/", {
           text: "New Note...",
@@ -262,12 +257,26 @@ function NoteAppContainer() {
         .then((res) => {
           console.log(res.data);
 
-          text.current.style.display = "flex";
-          text.current.focus();
+          //focus new note
+          axios
+            .get("http://localhost:5000/notes/")
+            .then((response) => {
+              let noteList = response.data;
+              noteList = noteList.sort((a, b) =>
+                a.lastUpdatedDate < b.lastUpdatedDate ? 1 : -1
+              );
+              setNotes(noteList);
+              setActive(noteList[0]);
+              setTags(noteList[0].tags);
 
-          setActive(notes[0]);
-          setTags(notes[0].tags);
-          text.current.value = notes[0].text;
+              text.current.style.display = "flex";
+              text.current.focus();
+
+              text.current.value = noteList[0].text;
+            })
+            .catch((error) => {
+              console.log(error);
+            });
         });
     },
 
@@ -276,41 +285,59 @@ function NoteAppContainer() {
         return;
       }
 
-      NoteStorageUtils.delNote(active);
-      setNotes(NoteStorageUtils.getNoteList());
+      axios
+        .delete("http://localhost:5000/notes/" + active._id)
+        .then((res) => {
+          console.log(res.data);
 
-      if (NoteStorageUtils.isEmpty()) {
-        //if empty, disable textearea and deactivate selected note. otherwise, focus textarea.
-        setActive(undefined);
-        setTags(TagUtils.getTags(active));
-        text.current.style.display = "none";
-        handleBackToList();
-        return;
-      }
+          setNotes(notes.filter((note) => note._id !== active._id));
 
-      text.current.focus();
+          axios
+            .get("http://localhost:5000/notes/")
+            .then((response) => {
+              let noteList = response.data;
+              noteList = noteList.sort((a, b) =>
+                a.lastUpdatedDate < b.lastUpdatedDate ? 1 : -1
+              );
+              setNotes(noteList);
+              setActive(noteList.length === 0 ? undefined : noteList[0]);
+              setTags(noteList.length === 0 ? undefined : noteList[0].tags);
 
-      //automatically activate the first note
-      setActive(NoteStorageUtils.getFirstNote());
-      text.current.value = NoteStorageUtils.getFirstNote().text;
-      setTags(NoteStorageUtils.getFirstNote().tags);
+              if (noteList.length === 0) {
+                text.current.style.display = "none";
+              } else {
+                text.current.style.display = "flex";
+                text.current.focus();
+                text.current.value = noteList[0].text;
+              }
 
-      handleBackToList(); //this will get back to note list after deleting, only in mobile size.
+              handleBackToList();
+            })
+            .catch((error) => {
+              console.log(error);
+            });
+        })
+        .catch((err) => console.log(err));
     },
 
     handleSelect: (e) => {
-      const selectedNote = NoteStorageUtils.getNoteById(
-        e.target.closest(".item").dataset.noteId //to prevent selecting error when clicking child element, find closest parent
-      );
-      setActive(selectedNote);
-      //putting active instead of selectedNote will lead to an weird behavior (active note was not properly updated)
-      text.current.value = selectedNote.text;
-      setTags(TagUtils.getTags(selectedNote));
+      console.log(e.target.closest(".item").dataset.noteId);
+      axios
+        .get(
+          "http://localhost:5000/notes/" +
+            e.target.closest(".item").dataset.noteId
+        )
+        .then((res) => {
+          setActive(res.data);
+          setTags(res.data.tags);
+          text.current.value = res.data.text;
 
-      handleShowEditor();
+          handleShowEditor();
 
-      text.current.style.display = "flex";
-      text.current.focus();
+          text.current.style.display = "flex";
+          text.current.focus();
+        })
+        .catch((err) => console.log(err));
     },
 
     handleEdit: (e) => {
@@ -318,15 +345,34 @@ function NoteAppContainer() {
         return;
       }
 
-      const edittedNote = active;
-
-      if (edittedNote.text !== text.current.value) {
-        edittedNote.text = text.current.value;
-        edittedNote.lastUpdatedDate = Date.now();
-
-        NoteStorageUtils.updateNote(edittedNote, text.current.value);
-        setNotes(NoteStorageUtils.getNoteList());
+      if (active.text === text.current.value) {
+        return;
       }
+
+      active.text = text.current.value;
+      active.lastUpdatedDate = new Date(Date.now()).toISOString();
+
+      axios
+        .post("http://localhost:5000/notes/update/" + active._id, active)
+        .then((res) => {
+          console.log(res.data);
+
+          axios
+            .get("http://localhost:5000/notes/")
+            .then((res) => {
+              console.log(res.data);
+
+              let noteList = res.data;
+              noteList = noteList.sort((a, b) =>
+                a.lastUpdatedDate < b.lastUpdatedDate ? 1 : -1
+              );
+              setNotes(noteList);
+            })
+            .catch((error) => {
+              console.log(error);
+            });
+        })
+        .catch((err) => console.log(err));
     },
   };
 

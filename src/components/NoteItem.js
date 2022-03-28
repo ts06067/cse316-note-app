@@ -23,8 +23,8 @@ function NoteItem(props) {
 }
 
 function formatString(str) {
-  return str.length >= 30
-    ? str.slice(0, 30) + "..."
+  return str.length >= 25
+    ? str.slice(0, 25) + "..."
     : str.length > 0
     ? str
     : "No Text";

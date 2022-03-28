@@ -30,9 +30,7 @@ export default class NoteStorageUtils {
   static delNote(toDelete) {
     axios
       .delete("http://localhost:5000/notes/" + toDelete._id)
-      .then((response) => {
-        console.log(response.data);
-      });
+      .then((response) => {});
   }
 
   static getNoteById(id) {
