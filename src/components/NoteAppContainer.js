@@ -15,6 +15,7 @@ import ProfileStorageUtils from "../api/ProfileStorageUtils";
 import useWindowDimensions from "./WindowDimensions.js";
 
 import "./css/NoteAppContainer.css";
+import { act } from "react-dom/test-utils";
 
 function NoteAppContainer() {
   //states for notelist / active note / tags for the active note
@@ -203,42 +204,47 @@ function NoteAppContainer() {
       if (active === undefined) {
         return;
       }
-      let selectedNote = NoteStorageUtils.getNoteById(active.id); //we are editing tags for a selected note
 
-      TagUtils.addTag(selectedNote, tag); //add tags in note database
-      setNotes(NoteStorageUtils.getNoteList()); //update note database with some editted tags
+      active.tags = [...active.tags, tag];
 
-      selectedNote = NoteStorageUtils.getNoteById(active.id); //now selectedNote is old, so get the same note again.
-
-      setTags(TagUtils.getTags(selectedNote));
+      axios
+        .post("http://localhost:5000/notes/update/" + active._id, active)
+        .then((res) => {
+          console.log(res);
+          setTags(active.tags);
+        })
+        .catch((err) => console.log(err));
     },
     handleDeleteTag: (i) => {
       if (active === undefined) {
         return;
       }
 
-      let selectedNote = NoteStorageUtils.getNoteById(active.id);
+      active.tags.splice(i, 1);
 
-      TagUtils.deleteTag(selectedNote, i);
-      setNotes(NoteStorageUtils.getNoteList());
-
-      selectedNote = NoteStorageUtils.getNoteById(active.id);
-
-      setTags(TagUtils.getTags(selectedNote));
+      axios
+        .post("http://localhost:5000/notes/update/" + active._id, active)
+        .then((res) => {
+          console.log(res);
+          setTags(active.tags);
+        })
+        .catch((err) => console.log(err));
     },
     handleDragTag: (tag, currPos, newPos) => {
       if (active === undefined) {
         return;
       }
 
-      let selectedNote = NoteStorageUtils.getNoteById(active.id);
+      active.tags.splice(currPos, 1);
+      active.tags.splice(newPos, 0, tag);
 
-      TagUtils.dragTag(selectedNote, tag, currPos, newPos);
-      setNotes(NoteStorageUtils.getNoteList());
-
-      selectedNote = NoteStorageUtils.getNoteById(active.id);
-
-      setTags(TagUtils.getTags(selectedNote));
+      axios
+        .post("http://localhost:5000/notes/update/" + active._id, active)
+        .then((res) => {
+          console.log(res);
+          setTags(active.tags);
+        })
+        .catch((err) => console.log(err));
     },
   };
 
