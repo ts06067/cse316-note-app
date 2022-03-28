@@ -1,12 +1,10 @@
 import { useEffect, useState, useRef } from "react";
 import axios from "axios";
 
-//virtual DOM
+//virtual React DOM
 import MainPanel from "./MainPanel";
 import SidePanel from "./SidePanel";
 import ProfilePage from "./ProfilePage";
-
-//apis: note and profile storages
 
 //user-defined hook for handling window size change
 import useWindowDimensions from "./WindowDimensions.js";
@@ -18,6 +16,7 @@ function NoteAppContainer() {
   const [notes, setNotes] = useState([]);
   const [active, setActive] = useState(undefined);
   const [tags, setTags] = useState([]);
+  const [profile, setProfile] = useState(null);
 
   //body, tags elements
   const text = useRef(null);
@@ -29,14 +28,15 @@ function NoteAppContainer() {
   const inputProfileEmail = useRef(null);
   const inputProfileColorScheme = useRef(null);
 
+  //state for search
+  const [search, setSearch] = useState("");
+
   //window width and height for mobile responsiveness
   const { width, height } = useWindowDimensions();
   //in mobile size, clicking an item in note list will get to editor mode, by toggling editMode.
   const [editMode, setEditMode] = useState(false);
-
-  //states for profile page
+  //show profile window or not
   const [showProfile, setShowProfile] = useState(false);
-  const [profile, setProfile] = useState(null);
 
   //css properties for sidebar / text editor / profile popup window
   const [styleSideBar, setStyleSideBar] = useState({});
@@ -96,6 +96,7 @@ function NoteAppContainer() {
     () => (tagsRef.current.style.display = editMode ? "block" : "none"),
     [editMode]
   );
+
   /*
     handlers for various events when window size changes,
     which includes: 
@@ -396,6 +397,14 @@ function NoteAppContainer() {
     },
   };
 
+  /*
+    handlers for search input
+  */
+
+  const handlerSearchInputChange = (e) => {
+    setSearch(e.target.value);
+  };
+
   return (
     <div className="container">
       {showProfile && (
@@ -413,6 +422,8 @@ function NoteAppContainer() {
       <SidePanel
         notes={notes}
         active={active}
+        search={search}
+        onChangeSearch={handlerSearchInputChange}
         onAdd={handlerNotes.handleAdd}
         onSelect={handlerNotes.handleSelect}
         visible={styleSideBar}
