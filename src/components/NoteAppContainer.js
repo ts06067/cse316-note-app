@@ -40,7 +40,7 @@ function NoteAppContainer() {
 
   //states for profile page
   const [showProfile, setShowProfile] = useState(false);
-  const [profile, setProfile] = useState(ProfileStorageUtils.getProfile());
+  const [profile, setProfile] = useState(null);
 
   //css properties for sidebar / text editor / profile popup window
   const [styleSideBar, setStyleSideBar] = useState({});
@@ -55,6 +55,7 @@ function NoteAppContainer() {
   useEffect(() => handleComponentVisibility(), [width]);
   useEffect(() => handleButtonVisibility(), [width]);
 
+  //fetch notes on load
   useEffect(() => {
     axios
       .get("http://localhost:5000/notes/")
@@ -64,6 +65,20 @@ function NoteAppContainer() {
           a.lastUpdatedDate < b.lastUpdatedDate ? 1 : -1
         );
         setNotes(noteList);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }, []);
+
+  //fetch user profiles on load
+  useEffect(() => {
+    axios
+      .get("http://localhost:5000/users/")
+      .then((response) => {
+        let userList = response.data;
+        setProfile(userList[0]); //For now, just assume only one user
+        console.log(response.data);
       })
       .catch((error) => {
         console.log(error);
@@ -173,7 +188,8 @@ function NoteAppContainer() {
       if (
         e.target.className === "background" ||
         e.target.className === "btnProfile" ||
-        e.target.className === "btnClose"
+        e.target.className === "btnClose" ||
+        e.target.className === "btnSave"
       ) {
         setShowProfile(!showProfile);
       }
@@ -182,16 +198,17 @@ function NoteAppContainer() {
     handleSaveProfile: (e) => {
       e.preventDefault(); //prevents default submit action
 
-      let newProfile = {
-        image: "url",
+      profile.name = inputProfileName.current.value;
+      profile.email = inputProfileEmail.current.value;
+      profile.colorScheme = inputProfileColorScheme.current.value;
+      //profile.image...
 
-        name: inputProfileName.current.value,
-        email: inputProfileEmail.current.value,
-        colorScheme: inputProfileColorScheme.current.value,
-      };
-
-      ProfileStorageUtils.setProfile(newProfile);
-      setProfile(ProfileStorageUtils.getProfile());
+      axios
+        .post("http://localhost:5000/users/update/" + profile._id, profile)
+        .then((res) => {
+          console.log(res.data);
+        })
+        .catch((err) => console.log(err));
     },
   };
 
