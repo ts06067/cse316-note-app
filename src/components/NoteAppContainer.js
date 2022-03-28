@@ -377,31 +377,44 @@ function NoteAppContainer() {
         return;
       }
 
-      active.text = text.current.value;
-      active.lastUpdatedDate = new Date(Date.now()).toISOString();
+      const updatedDate = new Date(Date.now()).toISOString();
+      const updatedText = text.current.value;
+      const noteToUpdate = active;
 
-      axios
-        .post("http://localhost:5000/notes/update/" + active._id, active)
-        .then((res) => {
-          axios
-            .get("http://localhost:5000/notes/")
-            .then((res) => {
-              let noteList = res.data;
-              noteList = noteList.sort((a, b) =>
-                a.lastUpdatedDate < b.lastUpdatedDate ? 1 : -1
-              );
-              const filteredNoteList = Search.filterCaseInsensitive(
-                noteList,
-                searchRef.current.value
-              );
-              setNotes(noteList);
-              setFilteredNotes(filteredNoteList);
-            })
-            .catch((error) => {
-              console.log(error);
-            });
-        })
-        .catch((err) => console.log(err));
+      //pre-save information to update. Otherwise, it will inadvertently update other selected note.
+      noteToUpdate.text = updatedText;
+      noteToUpdate.lastUpdatedDate = updatedDate;
+
+      //debounced edit
+      let timer;
+      clearTimeout(timer);
+      timer = setTimeout(() => {
+        axios
+          .post(
+            "http://localhost:5000/notes/update/" + noteToUpdate._id,
+            noteToUpdate
+          )
+          .then((res) => {
+            axios
+              .get("http://localhost:5000/notes/")
+              .then((res) => {
+                let noteList = res.data;
+                noteList = noteList.sort((a, b) =>
+                  a.lastUpdatedDate < b.lastUpdatedDate ? 1 : -1
+                );
+                const filteredNoteList = Search.filterCaseInsensitive(
+                  noteList,
+                  searchRef.current.value
+                );
+                setNotes(noteList);
+                setFilteredNotes(filteredNoteList);
+              })
+              .catch((error) => {
+                console.log(error);
+              });
+          })
+          .catch((err) => console.log(err));
+      }, 1000);
     },
   };
 

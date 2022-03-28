@@ -6,7 +6,7 @@ function TextBody(props) {
       <textarea
         ref={props.text}
         placeholder="Enter text..."
-        onBlur={props.onEdit}
+        onChange={props.onEdit}
       ></textarea>
     </div>
   );
