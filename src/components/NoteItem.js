@@ -4,25 +4,27 @@ function NoteItem(props) {
   return (
     <div
       onClick={props.onClick}
-      data-note-id={props.note.id}
+      data-note-id={props.note._id}
       className={
-        props.active !== undefined && props.note.id === props.active.id
+        props.active !== undefined && props.note._id === props.active._id
           ? "item --selected"
           : "item"
       }
     >
       <span style={{ fontSize: 18 }}>
-        {formatString(props.note.body)}
+        {formatString(props.note.text)}
         <br></br>{" "}
       </span>
-      <span style={{ fontSize: 14 }}>{"\n" + formatDate(props.note.date)}</span>
+      <span style={{ fontSize: 14 }}>
+        {"\n" + formatDate(props.note.lastUpdatedDate)}
+      </span>
     </div>
   );
 }
 
 function formatString(str) {
-  return str.length >= 30
-    ? str.slice(0, 30) + "..."
+  return str.length >= 25
+    ? str.slice(0, 25) + "..."
     : str.length > 0
     ? str
     : "No Text";

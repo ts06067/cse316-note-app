@@ -4,7 +4,7 @@ function TextBody(props) {
   return (
     <div className="textBody">
       <textarea
-        ref={props.body}
+        ref={props.text}
         placeholder="Enter text..."
         onBlur={props.onEdit}
       ></textarea>
