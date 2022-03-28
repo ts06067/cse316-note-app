@@ -188,14 +188,14 @@ function NoteAppContainer() {
   const handlerProfile = {
     //if clicked background, profile image button, or 'close (X)' button, then close the profile window.
     handleOpenProfile: (e) => {
-      if (
-        e.target.className === "background" ||
-        e.target.className === "btnProfile" ||
-        e.target.className === "btnClose" ||
-        e.target.className === "btnSave"
-      ) {
-        setShowProfile(!showProfile);
-      }
+      const classes = Array.from(e.target.classList);
+      const eventTargets = ["background", "btnProfile", "btnClose", "btnSave"];
+      eventTargets.forEach((target) => {
+        if (classes.indexOf(target) !== -1) {
+          setShowProfile(!showProfile);
+          return;
+        }
+      });
     },
     //update profile when clicking 'save' button.
     handleSaveProfile: (e) => {

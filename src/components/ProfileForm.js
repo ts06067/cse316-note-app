@@ -11,8 +11,11 @@ function ProfileForm(props) {
     <div style={props.fullSize} className="formWrapper">
       <div className="formTitle">
         <h2>Edit Profile</h2>
-        <button className="btnClose" onClick={props.onOpenProfile}>
-          <span className="material-icons">close</span>
+        <button
+          className="btnClose material-icons"
+          onClick={props.onOpenProfile}
+        >
+          close
         </button>
       </div>
       <form className="form">
