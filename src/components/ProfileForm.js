@@ -12,7 +12,7 @@ function ProfileForm(props) {
       <div className="formTitle">
         <h2>Edit Profile</h2>
         <button className="btnClose" onClick={props.onOpenProfile}>
-          <span class="material-icons">close</span>
+          <span className="material-icons">close</span>
         </button>
       </div>
       <form className="form">
