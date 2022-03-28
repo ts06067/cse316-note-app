@@ -7,6 +7,7 @@ function SearchBar(props) {
         <span className="material-icons"> search </span>
       </div>
       <input
+        ref={props.searchRef}
         onChange={props.onChangeSearch}
         className="searchBox"
         placeholder="Search all notes"

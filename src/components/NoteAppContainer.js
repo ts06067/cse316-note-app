@@ -9,11 +9,16 @@ import ProfilePage from "./ProfilePage";
 //user-defined hook for handling window size change
 import useWindowDimensions from "./WindowDimensions.js";
 
+//css
 import "./css/NoteAppContainer.css";
+
+//utilities
+import Search from "./api/Search.js";
 
 function NoteAppContainer() {
   //states for notelist / active note / tags for the active note
   const [notes, setNotes] = useState([]);
+  const [filteredNotes, setFilteredNotes] = useState([]);
   const [active, setActive] = useState(undefined);
   const [tags, setTags] = useState([]);
   const [profile, setProfile] = useState(null);
@@ -22,14 +27,14 @@ function NoteAppContainer() {
   const text = useRef(null);
   const tagsRef = useRef(null);
 
+  //search input
+  const searchRef = useRef(null);
+
   //profile input elements
   const inputProfileImage = useRef(null);
   const inputProfileName = useRef(null);
   const inputProfileEmail = useRef(null);
   const inputProfileColorScheme = useRef(null);
-
-  //state for search
-  const [search, setSearch] = useState("");
 
   //window width and height for mobile responsiveness
   const { width, height } = useWindowDimensions();
@@ -61,6 +66,7 @@ function NoteAppContainer() {
           a.lastUpdatedDate < b.lastUpdatedDate ? 1 : -1
         );
         setNotes(noteList);
+        setFilteredNotes(noteList);
       })
       .catch((error) => {
         console.log(error);
@@ -74,7 +80,6 @@ function NoteAppContainer() {
       .then((response) => {
         let userList = response.data;
         setProfile(userList[0]); //For now, just assume only one user
-        console.log(response.data);
       })
       .catch((error) => {
         console.log(error);
@@ -225,7 +230,6 @@ function NoteAppContainer() {
       axios
         .post("http://localhost:5000/notes/update/" + active._id, active)
         .then((res) => {
-          console.log(res);
           setTags(active.tags);
         })
         .catch((err) => console.log(err));
@@ -240,7 +244,6 @@ function NoteAppContainer() {
       axios
         .post("http://localhost:5000/notes/update/" + active._id, active)
         .then((res) => {
-          console.log(res);
           setTags(active.tags);
         })
         .catch((err) => console.log(err));
@@ -256,7 +259,6 @@ function NoteAppContainer() {
       axios
         .post("http://localhost:5000/notes/update/" + active._id, active)
         .then((res) => {
-          console.log(res);
           setTags(active.tags);
         })
         .catch((err) => console.log(err));
@@ -276,17 +278,18 @@ function NoteAppContainer() {
           lastUpdatedDate: new Date(Date.now()).toISOString(),
         })
         .then((res) => {
-          console.log(res.data);
-
           //focus new note
           axios
             .get("http://localhost:5000/notes/")
             .then((response) => {
+              searchRef.current.value = "";
+
               let noteList = response.data;
               noteList = noteList.sort((a, b) =>
                 a.lastUpdatedDate < b.lastUpdatedDate ? 1 : -1
               );
               setNotes(noteList);
+              setFilteredNotes(noteList);
               setActive(noteList[0]);
               setTags(noteList[0].tags);
 
@@ -309,27 +312,32 @@ function NoteAppContainer() {
       axios
         .delete("http://localhost:5000/notes/" + active._id)
         .then((res) => {
-          console.log(res.data);
-
-          setNotes(notes.filter((note) => note._id !== active._id));
-
           axios
             .get("http://localhost:5000/notes/")
             .then((response) => {
-              let noteList = response.data;
-              noteList = noteList.sort((a, b) =>
-                a.lastUpdatedDate < b.lastUpdatedDate ? 1 : -1
+              const noteList = response.data;
+              const filteredNoteList = Search.filterCaseInsensitive(
+                noteList,
+                searchRef.current.value
               );
-              setNotes(noteList);
-              setActive(noteList.length === 0 ? undefined : noteList[0]);
-              setTags(noteList.length === 0 ? undefined : noteList[0].tags);
 
-              if (noteList.length === 0) {
+              setNotes(noteList);
+              setFilteredNotes(filteredNoteList);
+              setActive(
+                filteredNoteList.length === 0 ? undefined : filteredNoteList[0]
+              );
+              setTags(
+                filteredNoteList.length === 0
+                  ? undefined
+                  : filteredNoteList[0].tags
+              );
+
+              if (filteredNoteList.length === 0) {
                 text.current.style.display = "none";
               } else {
                 text.current.style.display = "flex";
                 text.current.focus();
-                text.current.value = noteList[0].text;
+                text.current.value = filteredNoteList[0].text;
               }
 
               handleBackToList();
@@ -342,7 +350,6 @@ function NoteAppContainer() {
     },
 
     handleSelect: (e) => {
-      console.log(e.target.closest(".item").dataset.noteId);
       axios
         .get(
           "http://localhost:5000/notes/" +
@@ -376,18 +383,19 @@ function NoteAppContainer() {
       axios
         .post("http://localhost:5000/notes/update/" + active._id, active)
         .then((res) => {
-          console.log(res.data);
-
           axios
             .get("http://localhost:5000/notes/")
             .then((res) => {
-              console.log(res.data);
-
               let noteList = res.data;
               noteList = noteList.sort((a, b) =>
                 a.lastUpdatedDate < b.lastUpdatedDate ? 1 : -1
               );
+              const filteredNoteList = Search.filterCaseInsensitive(
+                noteList,
+                searchRef.current.value
+              );
               setNotes(noteList);
+              setFilteredNotes(filteredNoteList);
             })
             .catch((error) => {
               console.log(error);
@@ -401,8 +409,23 @@ function NoteAppContainer() {
     handlers for search input
   */
 
-  const handlerSearchInputChange = (e) => {
-    setSearch(e.target.value);
+  const handlerSearch = {
+    handleSearchInputChange: (e) => {
+      const search = e.target.value;
+      console.log("searching for : " + search);
+
+      const filteredNoteList = Search.filterCaseInsensitive(notes, search);
+
+      setFilteredNotes(filteredNoteList);
+
+      if (active !== undefined && filteredNoteList.length > 0) {
+        if (
+          filteredNoteList.find((note) => note._id === active._id) === undefined
+        ) {
+          setActive(filteredNoteList[0]);
+        }
+      }
+    },
   };
 
   return (
@@ -420,10 +443,10 @@ function NoteAppContainer() {
         ></ProfilePage>
       )}
       <SidePanel
-        notes={notes}
+        notes={filteredNotes}
         active={active}
-        search={search}
-        onChangeSearch={handlerSearchInputChange}
+        searchRef={searchRef}
+        onChangeSearch={handlerSearch.handleSearchInputChange}
         onAdd={handlerNotes.handleAdd}
         onSelect={handlerNotes.handleSelect}
         visible={styleSideBar}

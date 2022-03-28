@@ -11,29 +11,22 @@ function SidePanel(props) {
         onOpenProfile={props.onOpenProfile}
       ></TopBarLeft>
       <SearchBar
-        search={props.search}
+        searchRef={props.searchRef}
         onChangeSearch={props.onChangeSearch}
       ></SearchBar>
       <div className="noteListWrapper" style={{ height: props.height - 100 }}>
         {props.notes &&
-          props.notes.map(
-            (note) =>
-              matchStr(note.text, props.search) && (
-                <NoteItem
-                  key={note._id}
-                  onClick={props.onSelect}
-                  note={note}
-                  active={props.active}
-                ></NoteItem>
-              )
-          )}
+          props.notes.map((note) => (
+            <NoteItem
+              key={note._id}
+              onClick={props.onSelect}
+              note={note}
+              active={props.active}
+            ></NoteItem>
+          ))}
       </div>
     </div>
   );
-}
-
-function matchStr(s1, s2) {
-  return s1.toLowerCase().indexOf(s2.toLowerCase()) !== -1;
 }
 
 export default SidePanel;
