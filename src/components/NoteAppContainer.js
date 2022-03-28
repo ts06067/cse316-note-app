@@ -225,12 +225,14 @@ function NoteAppContainer() {
         return;
       }
 
-      active.tags = [...active.tags, tag];
+      const newTags = [...tags, tag];
+      const newNote = active;
+      newNote.tags = [...newTags];
 
       axios
-        .post("http://localhost:5000/notes/update/" + active._id, active)
+        .post("http://localhost:5000/notes/update/" + active._id, newNote)
         .then((res) => {
-          setTags(active.tags);
+          setTags(newTags);
         })
         .catch((err) => console.log(err));
     },
@@ -239,12 +241,15 @@ function NoteAppContainer() {
         return;
       }
 
-      active.tags.splice(i, 1);
+      const newTags = [...tags];
+      newTags.splice(i, 1);
+      const newNote = active;
+      newNote.tags = [...newTags];
 
       axios
-        .post("http://localhost:5000/notes/update/" + active._id, active)
+        .post("http://localhost:5000/notes/update/" + active._id, newNote)
         .then((res) => {
-          setTags(active.tags);
+          setTags(newTags);
         })
         .catch((err) => console.log(err));
     },
@@ -253,13 +258,16 @@ function NoteAppContainer() {
         return;
       }
 
-      active.tags.splice(currPos, 1);
-      active.tags.splice(newPos, 0, tag);
+      const newTags = [...tags];
+      newTags.splice(currPos, 1);
+      newTags.splice(newPos, 0, tag);
+      const newNote = active;
+      newNote.tags = [...newTags];
 
       axios
-        .post("http://localhost:5000/notes/update/" + active._id, active)
+        .post("http://localhost:5000/notes/update/" + active._id, newNote)
         .then((res) => {
-          setTags(active.tags);
+          setTags(newTags);
         })
         .catch((err) => console.log(err));
     },
