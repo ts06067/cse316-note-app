@@ -13,7 +13,7 @@ function MainPanel(props) {
       ></TopBarRight>
       <TextBody
         onEdit={props.onEdit}
-        body={props.body}
+        text={props.text}
         focus={props.focus}
       ></TextBody>
       <BottomTag

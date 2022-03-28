@@ -1,14 +1,12 @@
 import { useEffect, useState, useRef } from "react";
+import axios from "axios";
 
 //virtual DOM
 import MainPanel from "./MainPanel";
 import SidePanel from "./SidePanel";
-import TagUtils from "../api/TagUtils";
 import ProfilePage from "./ProfilePage";
 
 //apis: note and profile storages
-import NoteStorageUtils from "../api/NoteStorageUtils";
-import ProfileStorageUtils from "../api/ProfileStorageUtils";
 
 //user-defined hook for handling window size change
 import useWindowDimensions from "./WindowDimensions.js";
@@ -17,12 +15,12 @@ import "./css/NoteAppContainer.css";
 
 function NoteAppContainer() {
   //states for notelist / active note / tags for the active note
-  const [notes, setNotes] = useState(NoteStorageUtils.getNoteList());
+  const [notes, setNotes] = useState([]);
   const [active, setActive] = useState(undefined);
-  const [tags, setTags] = useState(TagUtils.getTags(active));
+  const [tags, setTags] = useState([]);
 
   //body, tags elements
-  const body = useRef(null);
+  const text = useRef(null);
   const tagsRef = useRef(null);
 
   //profile input elements
@@ -38,7 +36,7 @@ function NoteAppContainer() {
 
   //states for profile page
   const [showProfile, setShowProfile] = useState(false);
-  const [profile, setProfile] = useState(ProfileStorageUtils.getProfile());
+  const [profile, setProfile] = useState(null);
 
   //css properties for sidebar / text editor / profile popup window
   const [styleSideBar, setStyleSideBar] = useState({});
@@ -53,6 +51,36 @@ function NoteAppContainer() {
   useEffect(() => handleComponentVisibility(), [width]);
   useEffect(() => handleButtonVisibility(), [width]);
 
+  //fetch notes on load
+  useEffect(() => {
+    axios
+      .get("http://localhost:5000/notes/")
+      .then((response) => {
+        let noteList = response.data;
+        noteList = noteList.sort((a, b) =>
+          a.lastUpdatedDate < b.lastUpdatedDate ? 1 : -1
+        );
+        setNotes(noteList);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }, []);
+
+  //fetch user profiles on load
+  useEffect(() => {
+    axios
+      .get("http://localhost:5000/users/")
+      .then((response) => {
+        let userList = response.data;
+        setProfile(userList[0]); //For now, just assume only one user
+        console.log(response.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }, []);
+
   //in mobile size, if there is no active note, it does not open text editor.
   useEffect(
     () => (active === undefined ? setEditMode(false) : setEditMode(true)),
@@ -61,14 +89,13 @@ function NoteAppContainer() {
 
   //if editMode == true, display text body and corresponding tags in the text editor.
   useEffect(
-    () => (body.current.style.display = editMode ? "block" : "none"),
+    () => (text.current.style.display = editMode ? "block" : "none"),
     [editMode]
   );
   useEffect(
     () => (tagsRef.current.style.display = editMode ? "block" : "none"),
     [editMode]
   );
-
   /*
     handlers for various events when window size changes,
     which includes: 
@@ -158,7 +185,8 @@ function NoteAppContainer() {
       if (
         e.target.className === "background" ||
         e.target.className === "btnProfile" ||
-        e.target.className === "btnClose"
+        e.target.className === "btnClose" ||
+        e.target.className === "btnSave"
       ) {
         setShowProfile(!showProfile);
       }
@@ -167,16 +195,17 @@ function NoteAppContainer() {
     handleSaveProfile: (e) => {
       e.preventDefault(); //prevents default submit action
 
-      let newProfile = {
-        image: "url",
+      profile.name = inputProfileName.current.value;
+      profile.email = inputProfileEmail.current.value;
+      profile.colorScheme = inputProfileColorScheme.current.value;
+      //profile.image...
 
-        name: inputProfileName.current.value,
-        email: inputProfileEmail.current.value,
-        colorScheme: inputProfileColorScheme.current.value,
-      };
-
-      ProfileStorageUtils.setProfile(newProfile);
-      setProfile(ProfileStorageUtils.getProfile());
+      axios
+        .post("http://localhost:5000/users/update/" + profile._id, profile)
+        .then((res) => {
+          console.log(res.data);
+        })
+        .catch((err) => console.log(err));
     },
   };
 
@@ -189,42 +218,47 @@ function NoteAppContainer() {
       if (active === undefined) {
         return;
       }
-      let selectedNote = NoteStorageUtils.getNoteById(active.id); //we are editing tags for a selected note
 
-      TagUtils.addTag(selectedNote, tag); //add tags in note database
-      setNotes(NoteStorageUtils.getNoteList()); //update note database with some editted tags
+      active.tags = [...active.tags, tag];
 
-      selectedNote = NoteStorageUtils.getNoteById(active.id); //now selectedNote is old, so get the same note again.
-
-      setTags(TagUtils.getTags(selectedNote));
+      axios
+        .post("http://localhost:5000/notes/update/" + active._id, active)
+        .then((res) => {
+          console.log(res);
+          setTags(active.tags);
+        })
+        .catch((err) => console.log(err));
     },
     handleDeleteTag: (i) => {
       if (active === undefined) {
         return;
       }
 
-      let selectedNote = NoteStorageUtils.getNoteById(active.id);
+      active.tags.splice(i, 1);
 
-      TagUtils.deleteTag(selectedNote, i);
-      setNotes(NoteStorageUtils.getNoteList());
-
-      selectedNote = NoteStorageUtils.getNoteById(active.id);
-
-      setTags(TagUtils.getTags(selectedNote));
+      axios
+        .post("http://localhost:5000/notes/update/" + active._id, active)
+        .then((res) => {
+          console.log(res);
+          setTags(active.tags);
+        })
+        .catch((err) => console.log(err));
     },
     handleDragTag: (tag, currPos, newPos) => {
       if (active === undefined) {
         return;
       }
 
-      let selectedNote = NoteStorageUtils.getNoteById(active.id);
+      active.tags.splice(currPos, 1);
+      active.tags.splice(newPos, 0, tag);
 
-      TagUtils.dragTag(selectedNote, tag, currPos, newPos);
-      setNotes(NoteStorageUtils.getNoteList());
-
-      selectedNote = NoteStorageUtils.getNoteById(active.id);
-
-      setTags(TagUtils.getTags(selectedNote));
+      axios
+        .post("http://localhost:5000/notes/update/" + active._id, active)
+        .then((res) => {
+          console.log(res);
+          setTags(active.tags);
+        })
+        .catch((err) => console.log(err));
     },
   };
 
@@ -232,27 +266,38 @@ function NoteAppContainer() {
     handlers for notes: add / delete / edit
   */
 
-  const handlers = {
+  const handlerNotes = {
     handleAdd: (e) => {
-      //init new note
-      const newNote = {
-        id: Math.floor(Math.random() * 10000),
-        body: "New Note...",
-        date: Date.now(),
-      };
+      //post
+      axios
+        .post("http://localhost:5000/notes/add/", {
+          text: "New Note...",
+          lastUpdatedDate: new Date(Date.now()).toISOString(),
+        })
+        .then((res) => {
+          console.log(res.data);
 
-      //enable textarea
-      body.current.style.display = "flex";
-      body.current.focus();
+          //focus new note
+          axios
+            .get("http://localhost:5000/notes/")
+            .then((response) => {
+              let noteList = response.data;
+              noteList = noteList.sort((a, b) =>
+                a.lastUpdatedDate < b.lastUpdatedDate ? 1 : -1
+              );
+              setNotes(noteList);
+              setActive(noteList[0]);
+              setTags(noteList[0].tags);
 
-      //add the note to storage, then update the storage
-      NoteStorageUtils.addNote(newNote);
-      setNotes(NoteStorageUtils.getNoteList());
+              text.current.style.display = "flex";
+              text.current.focus();
 
-      //auto select
-      setActive(NoteStorageUtils.getFirstNote());
-      body.current.value = NoteStorageUtils.getFirstNote().body;
-      setTags(NoteStorageUtils.getFirstNote().tags);
+              text.current.value = noteList[0].text;
+            })
+            .catch((error) => {
+              console.log(error);
+            });
+        });
     },
 
     handleDelete: (e) => {
@@ -260,41 +305,59 @@ function NoteAppContainer() {
         return;
       }
 
-      NoteStorageUtils.delNote(active);
-      setNotes(NoteStorageUtils.getNoteList());
+      axios
+        .delete("http://localhost:5000/notes/" + active._id)
+        .then((res) => {
+          console.log(res.data);
 
-      if (NoteStorageUtils.isEmpty()) {
-        //if empty, disable textearea and deactivate selected note. otherwise, focus textarea.
-        setActive(undefined);
-        setTags(TagUtils.getTags(active));
-        body.current.style.display = "none";
-        handleBackToList();
-        return;
-      }
+          setNotes(notes.filter((note) => note._id !== active._id));
 
-      body.current.focus();
+          axios
+            .get("http://localhost:5000/notes/")
+            .then((response) => {
+              let noteList = response.data;
+              noteList = noteList.sort((a, b) =>
+                a.lastUpdatedDate < b.lastUpdatedDate ? 1 : -1
+              );
+              setNotes(noteList);
+              setActive(noteList.length === 0 ? undefined : noteList[0]);
+              setTags(noteList.length === 0 ? undefined : noteList[0].tags);
 
-      //automatically activate the first note
-      setActive(NoteStorageUtils.getFirstNote());
-      body.current.value = NoteStorageUtils.getFirstNote().body;
-      setTags(NoteStorageUtils.getFirstNote().tags);
+              if (noteList.length === 0) {
+                text.current.style.display = "none";
+              } else {
+                text.current.style.display = "flex";
+                text.current.focus();
+                text.current.value = noteList[0].text;
+              }
 
-      handleBackToList(); //this will get back to note list after deleting, only in mobile size.
+              handleBackToList();
+            })
+            .catch((error) => {
+              console.log(error);
+            });
+        })
+        .catch((err) => console.log(err));
     },
 
     handleSelect: (e) => {
-      const selectedNote = NoteStorageUtils.getNoteById(
-        e.target.closest(".item").dataset.noteId //to prevent selecting error when clicking child element, find closest parent
-      );
-      setActive(selectedNote);
-      //putting active instead of selectedNote will lead to an weird behavior (active note was not properly updated)
-      body.current.value = selectedNote.body;
-      setTags(TagUtils.getTags(selectedNote));
+      console.log(e.target.closest(".item").dataset.noteId);
+      axios
+        .get(
+          "http://localhost:5000/notes/" +
+            e.target.closest(".item").dataset.noteId
+        )
+        .then((res) => {
+          setActive(res.data);
+          setTags(res.data.tags);
+          text.current.value = res.data.text;
 
-      handleShowEditor();
+          handleShowEditor();
 
-      body.current.style.display = "flex";
-      body.current.focus();
+          text.current.style.display = "flex";
+          text.current.focus();
+        })
+        .catch((err) => console.log(err));
     },
 
     handleEdit: (e) => {
@@ -302,15 +365,34 @@ function NoteAppContainer() {
         return;
       }
 
-      const edittedNote = active;
-
-      if (edittedNote.body !== body.current.value) {
-        edittedNote.body = body.current.value;
-        edittedNote.date = Date.now();
-
-        NoteStorageUtils.updateNote(edittedNote, body.current.value);
-        setNotes(NoteStorageUtils.getNoteList());
+      if (active.text === text.current.value) {
+        return;
       }
+
+      active.text = text.current.value;
+      active.lastUpdatedDate = new Date(Date.now()).toISOString();
+
+      axios
+        .post("http://localhost:5000/notes/update/" + active._id, active)
+        .then((res) => {
+          console.log(res.data);
+
+          axios
+            .get("http://localhost:5000/notes/")
+            .then((res) => {
+              console.log(res.data);
+
+              let noteList = res.data;
+              noteList = noteList.sort((a, b) =>
+                a.lastUpdatedDate < b.lastUpdatedDate ? 1 : -1
+              );
+              setNotes(noteList);
+            })
+            .catch((error) => {
+              console.log(error);
+            });
+        })
+        .catch((err) => console.log(err));
     },
   };
 
@@ -331,18 +413,18 @@ function NoteAppContainer() {
       <SidePanel
         notes={notes}
         active={active}
-        onAdd={handlers.handleAdd}
-        onSelect={handlers.handleSelect}
+        onAdd={handlerNotes.handleAdd}
+        onSelect={handlerNotes.handleSelect}
         visible={styleSideBar}
         onOpenProfile={handlerProfile.handleOpenProfile}
         height={height}
       ></SidePanel>
       <MainPanel
-        body={body}
+        text={text}
         tags={tags}
         tagsRef={tagsRef}
-        onDelete={handlers.handleDelete}
-        onEdit={handlers.handleEdit}
+        onDelete={handlerNotes.handleDelete}
+        onEdit={handlerNotes.handleEdit}
         onAddTag={handlerTags.handleAddTag}
         onDeleteTag={handlerTags.handleDeleteTag}
         onDragTag={handlerTags.handleDragTag}
