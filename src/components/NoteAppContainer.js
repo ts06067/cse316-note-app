@@ -110,6 +110,7 @@ function NoteAppContainer() {
     let styleProfileWindow = {
       width: mobile ? "100vw" : "450px",
       height: mobile ? "100vh" : "auto",
+      borderRadius: mobile ? "0px" : "30px",
     };
 
     setStyleProfileWindow(styleProfileWindow);
