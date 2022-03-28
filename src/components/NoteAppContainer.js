@@ -265,7 +265,7 @@ function NoteAppContainer() {
     handlers for notes: add / delete / edit
   */
 
-  const handlers = {
+  const handlerNotes = {
     handleAdd: (e) => {
       //post
       axios
@@ -412,8 +412,8 @@ function NoteAppContainer() {
       <SidePanel
         notes={notes}
         active={active}
-        onAdd={handlers.handleAdd}
-        onSelect={handlers.handleSelect}
+        onAdd={handlerNotes.handleAdd}
+        onSelect={handlerNotes.handleSelect}
         visible={styleSideBar}
         onOpenProfile={handlerProfile.handleOpenProfile}
         height={height}
@@ -422,8 +422,8 @@ function NoteAppContainer() {
         text={text}
         tags={tags}
         tagsRef={tagsRef}
-        onDelete={handlers.handleDelete}
-        onEdit={handlers.handleEdit}
+        onDelete={handlerNotes.handleDelete}
+        onEdit={handlerNotes.handleEdit}
         onAddTag={handlerTags.handleAddTag}
         onDeleteTag={handlerTags.handleDeleteTag}
         onDragTag={handlerTags.handleDragTag}
