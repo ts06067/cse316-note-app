@@ -3,7 +3,7 @@ import ProfileForm from "./ProfileForm";
 
 function ProfilePage(props) {
   return (
-    <div onMouseDown={props.onOpenProfile} className={"background"}>
+    <div onMouseDown={props.onBackgroundClick} className={"background"}>
       <ProfileForm
         fullSize={props.fullSize}
         profile={props.profile}

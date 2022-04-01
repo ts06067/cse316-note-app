@@ -57,7 +57,7 @@ function ProfileForm(props) {
           <option value="dark">Dark</option>
         </select>
 
-        <div className="buttonArea">
+        <div className="buttonArea" onClick={props.onOpenProfile}>
           <button className={"btnSave"} onClick={props.onSaveProfile}>
             Save
           </button>

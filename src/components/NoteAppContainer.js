@@ -189,7 +189,17 @@ function NoteAppContainer() {
     //if clicked background, profile image button, or 'close (X)' button, then close the profile window.
     handleOpenProfile: (e) => {
       const classes = Array.from(e.target.classList);
-      const eventTargets = ["background", "btnProfile", "btnClose", "btnSave"];
+      const eventTargets = ["btnProfile", "btnClose", "btnSave"];
+      eventTargets.forEach((target) => {
+        if (classes.indexOf(target) !== -1) {
+          setShowProfile(!showProfile);
+          return;
+        }
+      });
+    },
+    handleBackgroundClick: (e) => {
+      const classes = Array.from(e.target.classList);
+      const eventTargets = ["background"];
       eventTargets.forEach((target) => {
         if (classes.indexOf(target) !== -1) {
           setShowProfile(!showProfile);
@@ -450,6 +460,7 @@ function NoteAppContainer() {
       {showProfile && (
         <ProfilePage
           profile={profile}
+          onBackgroundClick={handlerProfile.handleBackgroundClick}
           onOpenProfile={handlerProfile.handleOpenProfile}
           onSaveProfile={handlerProfile.handleSaveProfile}
           inputProfileImage={inputProfileImage}
