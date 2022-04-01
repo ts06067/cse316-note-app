@@ -358,22 +358,18 @@ function NoteAppContainer() {
     },
 
     handleSelect: (e) => {
-      axios
-        .get(
-          "http://localhost:5000/notes/" +
-            e.target.closest(".item").dataset.noteId
-        )
-        .then((res) => {
-          setActive(res.data);
-          setTags(res.data.tags);
-          text.current.value = res.data.text;
+      const selectedNote = filteredNotes.find(
+        (note) => note._id === e.target.closest(".item").dataset.noteId
+      );
 
-          handleShowEditor();
+      setActive(selectedNote);
+      setTags(selectedNote.tags);
+      text.current.value = selectedNote.text;
 
-          text.current.style.display = "flex";
-          text.current.focus();
-        })
-        .catch((err) => console.log(err));
+      handleShowEditor();
+
+      text.current.style.display = "flex";
+      text.current.focus();
     },
 
     handleEdit: (e) => {
