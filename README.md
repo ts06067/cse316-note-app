@@ -13,11 +13,15 @@ All notes and profile data are synchronized with MongoDB.
   ```sh
   git clone https://github.com/ts06067/cse316-hw3.git
   ```
-3. Install NPM packages.
+2. Install packages in source directory.
   ```sh
   npm install
   ```
-5. Run.
+3. Run the server in port 5000 in ./backend directory.
+  ```sh
+  nodemon server
+  ```
+4. Run the app in port 3000.
   ```sh
   npm start
   ```
