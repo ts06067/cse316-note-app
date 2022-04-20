@@ -1,6 +1,6 @@
 ## About
 It is a React-based web app with some basic note-taking features such as adding/deleting. It also support setting an user profile. \
-All notes and profile data are synchronized with MongoDB.
+All notes and profile data are stored in MongoDB Atlas.
 
 ### Built With
 * Node.js
