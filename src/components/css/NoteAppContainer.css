@@ -15,7 +15,7 @@
   user-select: none;
 }
 
-.container {
+.appContainer {
   display: flex;
   height: 100vh;
 }

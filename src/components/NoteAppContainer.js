@@ -456,7 +456,7 @@ function NoteAppContainer() {
   };
 
   return (
-    <div className="container">
+    <div className="appContainer">
       {showProfile && (
         <ProfilePage
           profile={profile}
