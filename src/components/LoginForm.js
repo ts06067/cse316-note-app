@@ -1,10 +1,13 @@
 import "./css/LoginForm.css";
 
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 function LoginForm(props) {
   const [email, setEmail] = useState("");
   const [pw, setPw] = useState("");
+  const navigate = useNavigate();
 
   const handleChangeInput = (e) => {
     const id = e.target.id;
@@ -23,9 +26,19 @@ function LoginForm(props) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log("Log in");
-    console.log(email);
-    console.log(pw);
+    const body = { password: pw, email: email };
+    axios
+      .post("http://localhost:5000/users/login", body, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        withCredentials: true,
+      })
+      .then((res) => {
+        console.log(res.status);
+        //navigate("/app");
+      })
+      .catch((err) => console.log(err));
   };
 
   return (
@@ -40,6 +53,10 @@ function LoginForm(props) {
       <button onClick={props.onClickRegister}>Create New Account</button>
     </div>
   );
+}
+
+function parseJSON(response) {
+  return response.json();
 }
 
 export default LoginForm;

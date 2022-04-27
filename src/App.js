@@ -1,6 +1,11 @@
 import "./App.css";
 
-import { BrowserRouter as Router, useRoutes } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Route,
+  Routes,
+  useRoutes,
+} from "react-router-dom";
 
 import NoteAppContainer from "./components/NoteAppContainer";
 import Login from "./pages/Login";
@@ -15,9 +20,11 @@ function AppRoutes() {
 
 function App() {
   return (
-    <Router>
-      <AppRoutes />
-    </Router>
+    <div className="App">
+      <Router>
+        <AppRoutes />
+      </Router>
+    </div>
   );
 }
 

@@ -15,6 +15,13 @@ router.post(
   })
 );
 
+router.get(
+  "/info",
+  wrapAsync(async function (req, res) {
+    res.send(req.session.userId);
+  })
+);
+
 router.post(
   "/login",
   wrapAsync(async function (req, res) {
@@ -22,7 +29,7 @@ router.post(
     const user = await User.findOne({ email, password });
     if (user) {
       req.session.userId = user._id;
-      res.send("id: " + req.session.userId);
+      //res.send("id: " + req.session.userId);
       res.sendStatus(204);
     } else {
       res.sendStatus(401);
