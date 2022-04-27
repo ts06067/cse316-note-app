@@ -1,15 +1,15 @@
 .container {
   background-color: white;
-  width: 500px;
-  height: 500px;
   display: flex;
   flex-direction: column;
 }
 
 .popUpContainer {
   background-color: white;
-  width: 400px;
-  height: 400px;
+}
+
+form {
+  width: 500px;
 }
 
 @media only screen and (max-width: 500px) {

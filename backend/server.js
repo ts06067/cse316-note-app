@@ -1,6 +1,12 @@
+const notesRouter = require("./routes/notes");
+const usersRouter = require("./routes/users");
+
 const express = require("express");
 const cors = require("cors");
+
 const mongoose = require("mongoose");
+const session = require("express-session");
+const MongoStore = require("connect-mongo");
 
 require("dotenv").config();
 
@@ -17,12 +23,59 @@ connection.once("open", () => {
   console.log("MongoDB database connection established successfully");
 });
 
-const notesRouter = require("./routes/notes");
-const usersRouter = require("./routes/users");
+const sessionSecret = "make a secret string";
+
+const store = MongoStore.create({
+  mongoUrl: uri,
+  secret: sessionSecret,
+  touchAfter: 24 * 60 * 60,
+});
+
+const sessionConfig = {
+  store,
+  name: "session",
+  secret: sessionSecret,
+  resave: false,
+  saveUninitialized: true,
+  cookie: {
+    httpOnly: true,
+    expires: Date.now() + 1000 * 60 * 60 * 24 * 7,
+    maxAge: 1000 * 60 * 60 * 24 * 7,
+    // later you would want to add: 'secure: true' once your website is hosted on HTTPS.
+  },
+};
+
+// This is middleware that will run before every request
+app.use((req, res, next) => {
+  // We can set variables on the request, which we can then access in a future method
+  req.requestTime = Date.now();
+  console.log(req.method, req.path);
+  // Calling next() makes it go to the next function that will handle the request
+  next();
+});
+
+app.use(session(sessionConfig));
 
 app.use("/notes", notesRouter);
 app.use("/users", usersRouter);
 
+app.use((err, req, res, next) => {
+  console.log("Error handling called " + err);
+  // If want to print out the error stack, uncomment below
+  // console.error(err.stack)
+  // Updating the statusMessage with our custom error message (otherwise it will have a default for the status code).
+  res.statusMessage = err.message;
+
+  if (err.name === "ValidationError") {
+    res.status(400).end();
+  } else {
+    // We could further interpret the errors to send a specific status based more error types.
+    res.status(500).end();
+  }
+});
+
 app.listen(port, () => {
   console.log(`Server is running on port: ${port}`);
 });
+
+module.exports = app;

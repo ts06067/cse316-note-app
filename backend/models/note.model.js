@@ -17,6 +17,7 @@ const noteSchema = new Schema(
       required: true,
       default: [],
     },
+    agent: { type: Schema.Types.ObjectId, ref: "User", required: true },
   },
   {
     timestamps: true,

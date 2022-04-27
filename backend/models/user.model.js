@@ -11,16 +11,25 @@ const userSchema = new Schema(
     email: {
       type: String,
       required: true,
+      unique: true,
+    },
+    password: {
+      type: String,
+      required: true,
     },
     colorScheme: {
       type: String,
-      required: true,
+      required: false,
+      default: "light",
     },
   },
   {
     timestamps: true,
   }
 );
+
+//for unique account
+userSchema.index({ email: "text" }, { unique: true });
 
 const User = mongoose.model("User", userSchema);
 
