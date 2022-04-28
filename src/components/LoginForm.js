@@ -1,4 +1,4 @@
-//import "./css/LoginForm.css";
+import "./css/LoginForm.css";
 
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -7,6 +7,8 @@ import axios from "axios";
 function LoginForm(props) {
   const [email, setEmail] = useState("");
   const [pw, setPw] = useState("");
+  const [err, setErr] = useState(false);
+
   const navigate = useNavigate();
 
   const api = axios.create({
@@ -32,22 +34,52 @@ function LoginForm(props) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const body = { password: pw, email: email };
-    api.post("/users/login", body).then((res) => {
-      console.log(res.data);
-      navigate("/app");
-    });
+    api
+      .post("/users/login", body)
+      .then((res) => {
+        console.log(res.data);
+        setErr(false);
+        navigate("/app");
+      })
+      .catch((err) => setErr(true));
   };
 
   return (
-    <div className="container">
+    <div className="logInContainer">
       <form className="logInForm">
-        <label htmlFor="userEmail">Email</label>
-        <input id="email" onChange={handleChangeInput}></input>
-        <label htmlFor="userPassword">Password</label>
-        <input id="pw" onChange={handleChangeInput}></input>
-        <button onClick={handleSubmit}>Log in</button>
+        <label className="logInLabel" htmlFor="userEmail">
+          Email
+        </label>
+        <input
+          className="logInInput"
+          id="email"
+          onChange={handleChangeInput}
+        ></input>
+        <label className="logInLabel" htmlFor="userPassword">
+          Password
+        </label>
+        <input
+          className="logInInput"
+          id="pw"
+          onChange={handleChangeInput}
+        ></input>
+        {err && (
+          <div className="errorMessage">
+            Error: Invalid email and/or password
+          </div>
+        )}
+        <button className="logInButton" onClick={handleSubmit}>
+          Log in
+        </button>
       </form>
-      <button onClick={props.onClickRegister}>Create New Account</button>
+      <div className="logInLine"></div>
+      <button
+        style={{ width: "200px" }}
+        className="registerButton"
+        onClick={props.onClickRegister}
+      >
+        Create New Account
+      </button>
     </div>
   );
 }

@@ -1,4 +1,4 @@
-//import "./css/LoginForm.css";
+import "./css/LoginForm.css";
 
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -44,17 +44,46 @@ function SignUpForm(props) {
   };
 
   return (
-    <div className="popUpContainer">
-      <h1>Sign Up</h1>
-      <button onClick={props.onClickClose}>X</button>
+    <div className="registerContainer">
+      <div className="logInTitleWrapper">
+        <div className="logInTitle">Sign Up</div>
+        <button className="material-icons" onClick={props.onClickClose}>
+          close
+        </button>
+      </div>
       <form className="logInForm">
-        <label htmlFor="userName">Name</label>
-        <input id="name" onChange={handleChangeInput}></input>
-        <label htmlFor="userEmail">Email</label>
-        <input id="email" onChange={handleChangeInput}></input>
-        <label htmlFor="userPassword">Password</label>
-        <input id="pw" onChange={handleChangeInput}></input>
-        <button onClick={handleSubmit}>Sign Up</button>
+        <label className="logInLabel" htmlFor="userName">
+          Name
+        </label>
+        <input
+          className="logInInput"
+          id="name"
+          onChange={handleChangeInput}
+        ></input>
+        <label className="logInLabel" htmlFor="userEmail">
+          Email
+        </label>
+        <input
+          className="logInInput"
+          id="email"
+          onChange={handleChangeInput}
+        ></input>
+        <label className="logInLabel" htmlFor="userPassword">
+          Password
+        </label>
+        <input
+          className="logInInput"
+          id="pw"
+          onChange={handleChangeInput}
+        ></input>
+        <div className="registerLine"></div>
+        <button
+          style={{ width: "100px" }}
+          className="registerButton"
+          onClick={handleSubmit}
+        >
+          Sign Up
+        </button>
       </form>
     </div>
   );
