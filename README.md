@@ -2,13 +2,13 @@
 It is a React-based note-taking app.
 
 ## Provided features:
-  *User Register/Login
-      ** Once Registered, you will be automatically logged in.
-  *Write and store notes per user.
-  *Search for notes
-  *Auto-coloring similar notes (with help of Tensorflow Universal Sentence Encoder)
-  *Add some tags
-  *Decorate your profile with an image file.
+  * User Register/Login
+      * Once Registered, you will be automatically logged in.
+  * Write and store notes per user.
+  * Search for notes
+  * Auto-coloring similar notes (with help of Tensorflow Universal Sentence Encoder)
+  * Add some tags
+  * Decorate your profile with an image file.
 
 ### Built With
 * Node.js
