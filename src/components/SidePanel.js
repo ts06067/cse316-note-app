@@ -7,6 +7,7 @@ function SidePanel(props) {
   return (
     <div className="sidePanel" style={props.visible}>
       <TopBarLeft
+        profile={props.profile}
         onAdd={props.onAdd}
         onOpenProfile={props.onOpenProfile}
       ></TopBarLeft>

@@ -23,7 +23,6 @@ function NoteAppContainer() {
   const [active, setActive] = useState(undefined);
   const [tags, setTags] = useState([]);
   const [profile, setProfile] = useState(null);
-  const [profileImg, setProfileImg] = useState(null);
 
   //body, tags elements
   const text = useRef(null);
@@ -528,6 +527,7 @@ function NoteAppContainer() {
         ></ProfilePage>
       )}
       <SidePanel
+        profile={profile}
         notes={filteredNotes}
         active={active}
         searchRef={searchRef}
