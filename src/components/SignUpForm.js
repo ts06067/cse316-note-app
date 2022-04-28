@@ -9,6 +9,11 @@ function SignUpForm(props) {
   const [email, setEmail] = useState("");
   const [pw, setPw] = useState("");
 
+  const [errMRegister, setErrMRegister] = useState("");
+  const [errMName, setErrMName] = useState("");
+  const [errMEmail, setErrMEmail] = useState("");
+  const [errMPw, setErrMPw] = useState("");
+
   const navigate = useNavigate();
 
   const api = axios.create({
@@ -35,12 +40,47 @@ function SignUpForm(props) {
   };
 
   const handleSubmit = (e) => {
+    const validateEmail = (email) => {
+      return /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/.test(email);
+    };
+
     e.preventDefault();
 
-    api.post("/users/register", { name, email, password: pw }).then((res) => {
-      console.log("Registered");
-      navigate("/app");
-    });
+    setErrMName("");
+    setErrMEmail("");
+    setErrMPw("");
+
+    api
+      .post("/users/register", { name, email, password: pw })
+      .then((res) => {
+        console.log("Registered");
+        navigate("/app");
+      })
+      .catch((err) => {
+        const status = err.response.status;
+
+        //validate on client side
+        if (name.length === 0) {
+          setErrMName("Name is required");
+        }
+        if (email.length === 0) {
+          setErrMEmail("Email is required");
+        } else if (!validateEmail(email)) {
+          setErrMEmail("Not a valid email");
+        }
+        if (pw.length === 0) {
+          setErrMPw("Password is required");
+        } else if (pw.length < 6) {
+          setErrMPw("Password must be at least 6 characters long");
+        }
+
+        if (status === 501) {
+          //MongoServerError
+          setErrMRegister(
+            "Unable to create an account. Maybe the email is already being used."
+          );
+        }
+      });
   };
 
   return (
@@ -60,6 +100,7 @@ function SignUpForm(props) {
           id="name"
           onChange={handleChangeInput}
         ></input>
+        {errMName !== "" && <div className="errorMessage">{errMName}</div>}
         <label className="logInLabel" htmlFor="userEmail">
           Email
         </label>
@@ -68,6 +109,7 @@ function SignUpForm(props) {
           id="email"
           onChange={handleChangeInput}
         ></input>
+        {errMEmail !== "" && <div className="errorMessage">{errMEmail}</div>}
         <label className="logInLabel" htmlFor="userPassword">
           Password
         </label>
@@ -76,7 +118,12 @@ function SignUpForm(props) {
           id="pw"
           onChange={handleChangeInput}
         ></input>
+        {errMPw !== "" && <div className="errorMessage">{errMPw}</div>}
+        {errMRegister !== "" && (
+          <div className="errorMessage">{errMRegister}</div>
+        )}
         <div className="registerLine"></div>
+
         <button
           style={{ width: "100px" }}
           className="registerButton"

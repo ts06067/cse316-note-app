@@ -75,6 +75,9 @@ app.use((err, req, res, next) => {
 
   if (err.name === "ValidationError") {
     res.status(400).end();
+  } else if (err.name === "MongoServerError") {
+    //unable to manipulate mongoDB
+    res.status(501).end();
   } else {
     // We could further interpret the errors to send a specific status based more error types.
     res.status(500).end();

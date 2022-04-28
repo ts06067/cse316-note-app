@@ -10,7 +10,6 @@ function Login() {
   const [showSignUp, setShowSignUp] = useState(false);
 
   const handleShowSignUp = () => {
-    console.log("clicked");
     setShowSignUp(!showSignUp);
   };
 
