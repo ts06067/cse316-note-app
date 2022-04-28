@@ -1,6 +1,14 @@
 ## About
-It is a React-based web app with some basic note-taking features such as adding/deleting. It also support setting an user profile. \
-All notes and profile data are stored in MongoDB Atlas.
+It is a React-based note-taking app.
+
+## Provided features:
+  *User Register/Login
+      ** Once Registered, you will be automatically logged in.
+  *Write and store notes per user.
+  *Search for notes
+  *Auto-coloring similar notes (with help of Tensorflow Universal Sentence Encoder)
+  *Add some tags
+  *Decorate your profile with an image file.
 
 ### Built With
 * Node.js
@@ -11,7 +19,7 @@ All notes and profile data are stored in MongoDB Atlas.
 ## Getting Started
 1. Clone the repo.
   ```sh
-  git clone https://github.com/ts06067/cse316-hw3.git
+  git clone https://github.com/ts06067/cse316-hw4.git
   ```
 2. Install packages in source directory.
   ```sh
