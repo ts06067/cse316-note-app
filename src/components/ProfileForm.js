@@ -61,7 +61,7 @@ function ProfileForm(props) {
           <button className={"btnSave"} onClick={props.onSaveProfile}>
             Save
           </button>
-          <button disabled={true}>Logout</button>
+          <button onClick={props.onLogOut}>Logout</button>
         </div>
       </form>
     </div>

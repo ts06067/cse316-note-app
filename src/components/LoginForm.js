@@ -9,6 +9,8 @@ function LoginForm(props) {
   const [pw, setPw] = useState("");
   const navigate = useNavigate();
 
+  const api = axios.create({ baseURL: "http://localhost:5000" });
+
   const handleChangeInput = (e) => {
     const id = e.target.id;
     const value = e.target.value;
@@ -24,21 +26,21 @@ function LoginForm(props) {
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const body = { password: pw, email: email };
-    axios
-      .post("http://localhost:5000/users/login", body, {
-        headers: {
-          "Content-Type": "application/json",
-        },
-        withCredentials: true,
-      })
-      .then((res) => {
-        console.log(res.status);
-        //navigate("/app");
-      })
-      .catch((err) => console.log(err));
+    api.post("/users/login", body, { withCredentials: true }).then((res) => {
+      console.log(res.data);
+      navigate("/app");
+    });
+  };
+
+  const handleInfo = async (e) => {
+    e.preventDefault();
+    api.get("/users/info", { withCredentials: true }).then((res) => {
+      const data = res.data;
+      console.log("userId: " + data);
+    });
   };
 
   return (
@@ -49,14 +51,11 @@ function LoginForm(props) {
         <label htmlFor="userPassword">Password</label>
         <input id="pw" onChange={handleChangeInput}></input>
         <button onClick={handleSubmit}>Log in</button>
+        <button onClick={handleInfo}>UserID</button>
       </form>
       <button onClick={props.onClickRegister}>Create New Account</button>
     </div>
   );
-}
-
-function parseJSON(response) {
-  return response.json();
 }
 
 export default LoginForm;

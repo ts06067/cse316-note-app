@@ -28,9 +28,10 @@ router.post(
     const { password, email } = req.body;
     const user = await User.findOne({ email, password });
     if (user) {
+      console.log(req.session.id);
       req.session.userId = user._id;
-      //res.send("id: " + req.session.userId);
-      res.sendStatus(204);
+      res.send("id: " + req.session.userId);
+      //res.sendStatus(204);
     } else {
       res.sendStatus(401);
     }
@@ -46,50 +47,27 @@ router.post(
   })
 );
 
-router.route("/").get((req, res) => {
-  User.find()
-    .then((users) => res.json(users))
-    .catch((err) => res.status(400).json("Error: " + err));
-});
+router.get(
+  "/",
+  wrapAsync(async function (req, res) {
+    const id = req.session.userId;
+    const user = await User.findById(id);
+    if (user) {
+      res.json(user);
+    }
+  })
+);
 
-router.route("/add").post((req, res) => {
-  const name = req.body.name;
-  const email = req.body.email;
-  const colorScheme = req.body.colorScheme;
-
-  const newUser = new User({ name, email, colorScheme });
-
-  newUser
-    .save()
-    .then(() => res.json("User added!"))
-    .catch((err) => res.status(400).json("Error: " + err));
-});
-
-router.route("/:id").get((req, res) => {
-  User.findById(req.params.id)
-    .then((user) => res.json(user))
-    .catch((err) => res.status(400).json("Error: " + err));
-});
-
-router.route("/:id").delete((req, res) => {
-  User.findByIdAndDelete(req.params.id)
-    .then(() => res.json("User deleted."))
-    .catch((err) => res.status(400).json("Error: " + err));
-});
-
-router.route("/update/:id").post((req, res) => {
-  User.findById(req.params.id)
-    .then((user) => {
-      user.username = req.body.user;
-      user.email = req.body.email;
-      user.colorScheme = req.body.colorScheme;
-
-      user
-        .save()
-        .then(() => res.json("User updated!"))
-        .catch((err) => res.status(400).json("Error: " + err));
-    })
-    .catch((err) => res.status(400).json("Error: " + err));
-});
+router.put(
+  "/",
+  wrapAsync(async function (req, res) {
+    const id = req.session.userId;
+    const { name, email, colorScheme } = req.body;
+    const user = await User.findByIdAndUpdate(id, { name, email, colorScheme });
+    if (user) {
+      res.sendStatus(201);
+    }
+  })
+);
 
 module.exports = router;

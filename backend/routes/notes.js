@@ -16,6 +16,7 @@ router.get(
   "/",
   isLoggedIn,
   wrapAsync(async function (req, res) {
+    console.log(req.session.id);
     let notes = await Note.find({ agent: req.session.userId });
     res.json(notes);
   })

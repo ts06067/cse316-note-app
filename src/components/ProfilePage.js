@@ -9,6 +9,7 @@ function ProfilePage(props) {
         profile={props.profile}
         onOpenProfile={props.onOpenProfile}
         onSaveProfile={props.onSaveProfile}
+        onLogOut={props.onLogOut}
         inputProfileImage={props.inputProfileImage}
         inputProfileName={props.inputProfileName}
         inputProfileEmail={props.inputProfileEmail}

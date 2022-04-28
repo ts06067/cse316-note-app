@@ -14,6 +14,7 @@ import "./css/NoteAppContainer.css";
 
 //utilities
 import Search from "./api/Search.js";
+import { useNavigate } from "react-router-dom";
 
 function NoteAppContainer() {
   //states for notelist / active note / tags for the active note
@@ -51,17 +52,24 @@ function NoteAppContainer() {
   //css property for 'back button', because the button will appear only in mobile size.
   const [styleButton, setStyleButton] = useState({});
 
+  const navigate = useNavigate();
+
   //handle mobile responsiveness whenever width changes.
   useEffect(() => handleProfileWindowSize(), [width]);
   useEffect(() => handleComponentVisibility(), [width]);
   useEffect(() => handleButtonVisibility(), [width]);
 
+  const api = axios.create({
+    baseURL: "http://localhost:5000",
+    withCredentials: true,
+  });
+
   //fetch notes on load
   useEffect(() => {
-    axios
-      .get("http://localhost:5000/notes/")
-      .then((response) => {
-        let noteList = response.data;
+    api
+      .get("/notes/")
+      .then((res) => {
+        let noteList = res.data;
         noteList = noteList.sort((a, b) =>
           a.lastUpdatedDate < b.lastUpdatedDate ? 1 : -1
         );
@@ -75,11 +83,11 @@ function NoteAppContainer() {
 
   //fetch user profiles on load
   useEffect(() => {
-    axios
-      .get("http://localhost:5000/users/")
-      .then((response) => {
-        let userList = response.data;
-        setProfile(userList[0]); //For now, just assume only one user
+    api
+      .get("/users/")
+      .then((res) => {
+        let user = res.data;
+        setProfile(user);
       })
       .catch((error) => {
         console.log(error);
@@ -216,12 +224,21 @@ function NoteAppContainer() {
       profile.colorScheme = inputProfileColorScheme.current.value;
       //profile.image...
 
-      axios
-        .post("http://localhost:5000/users/update/" + profile._id, profile)
+      api
+        .put("/users/", profile)
         .then((res) => {
-          console.log(res.data);
+          console.log("Success");
         })
         .catch((err) => console.log(err));
+    },
+
+    handleLogOut: (e) => {
+      e.preventDefault();
+
+      api.post("/users/logout").then((res) => {
+        console.log("Logging Out");
+        navigate("/login");
+      });
     },
   };
 
@@ -239,8 +256,8 @@ function NoteAppContainer() {
       const newNote = active;
       newNote.tags = [...newTags];
 
-      axios
-        .post("http://localhost:5000/notes/update/" + active._id, newNote)
+      api
+        .post("/notes/update/" + active._id, newNote)
         .then((res) => {
           setTags(newTags);
         })
@@ -256,8 +273,8 @@ function NoteAppContainer() {
       const newNote = active;
       newNote.tags = [...newTags];
 
-      axios
-        .post("http://localhost:5000/notes/update/" + active._id, newNote)
+      api
+        .post("/notes/update/" + active._id, newNote)
         .then((res) => {
           setTags(newTags);
         })
@@ -274,8 +291,8 @@ function NoteAppContainer() {
       const newNote = active;
       newNote.tags = [...newTags];
 
-      axios
-        .post("http://localhost:5000/notes/update/" + active._id, newNote)
+      api
+        .post("/notes/update/" + active._id, newNote)
         .then((res) => {
           setTags(newTags);
         })
@@ -290,19 +307,19 @@ function NoteAppContainer() {
   const handlerNotes = {
     handleAdd: (e) => {
       //post
-      axios
-        .post("http://localhost:5000/notes/add/", {
+      api
+        .post("/notes/add/", {
           text: "New Note...",
           lastUpdatedDate: new Date(Date.now()).toISOString(),
         })
         .then((res) => {
           //focus new note
-          axios
-            .get("http://localhost:5000/notes/")
-            .then((response) => {
+          api
+            .get("/notes/")
+            .then((res) => {
               searchRef.current.value = "";
 
-              let noteList = response.data;
+              let noteList = res.data;
               noteList = noteList.sort((a, b) =>
                 a.lastUpdatedDate < b.lastUpdatedDate ? 1 : -1
               );
@@ -327,13 +344,13 @@ function NoteAppContainer() {
         return;
       }
 
-      axios
-        .delete("http://localhost:5000/notes/" + active._id)
+      api
+        .delete("/notes/" + active._id)
         .then((res) => {
-          axios
-            .get("http://localhost:5000/notes/")
-            .then((response) => {
-              const noteList = response.data;
+          api
+            .get("/notes/")
+            .then((res) => {
+              const noteList = res.data;
               const filteredNoteList = Search.filterCaseInsensitive(
                 noteList,
                 searchRef.current.value
@@ -403,14 +420,11 @@ function NoteAppContainer() {
       let timer;
       clearTimeout(timer);
       timer = setTimeout(() => {
-        axios
-          .post(
-            "http://localhost:5000/notes/update/" + noteToUpdate._id,
-            noteToUpdate
-          )
+        api
+          .post("/notes/update/" + noteToUpdate._id, noteToUpdate)
           .then((res) => {
-            axios
-              .get("http://localhost:5000/notes/")
+            api
+              .get("/notes/")
               .then((res) => {
                 let noteList = res.data;
                 noteList = noteList.sort((a, b) =>
@@ -463,6 +477,7 @@ function NoteAppContainer() {
           onBackgroundClick={handlerProfile.handleBackgroundClick}
           onOpenProfile={handlerProfile.handleOpenProfile}
           onSaveProfile={handlerProfile.handleSaveProfile}
+          onLogOut={handlerProfile.handleLogOut}
           inputProfileImage={inputProfileImage}
           inputProfileName={inputProfileName}
           inputProfileEmail={inputProfileEmail}

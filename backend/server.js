@@ -15,11 +15,11 @@ const port = process.env.PORT || 5000;
 
 app.use(
   cors({
-    origin: "http://localhost:3000",
-    methods: ["POST", "PUT", "GET", "DELETE"],
+    origin: true,
     credentials: true,
   })
 );
+
 app.use(express.json());
 
 const uri = process.env.ATLAS_URI;
@@ -44,6 +44,7 @@ const sessionConfig = {
   resave: false,
   saveUninitialized: true,
   cookie: {
+    path: "/",
     httpOnly: true,
     expires: Date.now() + 1000 * 60 * 60 * 24 * 7,
     maxAge: 1000 * 60 * 60 * 24 * 7,
