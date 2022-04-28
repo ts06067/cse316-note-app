@@ -26,12 +26,10 @@ router.post(
   "/login",
   wrapAsync(async function (req, res) {
     const { password, email } = req.body;
-    const user = await User.findOne({ email, password });
+    const user = await User.findAndValidate(email, password);
     if (user) {
-      console.log(req.session.id);
       req.session.userId = user._id;
-      res.send("id: " + req.session.userId);
-      //res.sendStatus(204);
+      res.sendStatus(204);
     } else {
       res.sendStatus(401);
     }
@@ -42,7 +40,6 @@ router.post(
   "/logout",
   wrapAsync(async function (req, res) {
     req.session.userId = null;
-    res.send("id: " + req.session.userId);
     res.sendStatus(204);
   })
 );

@@ -230,8 +230,6 @@ function NoteAppContainer() {
       }
 
       if (imgFile) {
-        console.log("we will save " + imgFile);
-
         const formData = new FormData();
         const unsignedUploadPreset = "jpxjict6"; //my Cloudinary id
         formData.append("file", imgFile);
@@ -245,14 +243,10 @@ function NoteAppContainer() {
 
         const uploadedUrl = res.data.url;
         newProfile = { ...newProfile, imgUrl: uploadedUrl };
-
-        console.log(res);
       }
 
       setProfile(newProfile);
       const res = await api.put("/users", newProfile);
-
-      console.log(res);
 
       setShowProfile(!showProfile);
     },

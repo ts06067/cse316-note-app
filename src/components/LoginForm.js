@@ -37,7 +37,6 @@ function LoginForm(props) {
     api
       .post("/users/login", body)
       .then((res) => {
-        console.log(res.data);
         setErr(false);
         navigate("/app");
       })
