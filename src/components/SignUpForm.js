@@ -1,11 +1,20 @@
-import "./css/LoginForm.css";
+//import "./css/LoginForm.css";
 
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 function SignUpForm(props) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [pw, setPw] = useState("");
+
+  const navigate = useNavigate();
+
+  const api = axios.create({
+    baseURL: "http://localhost:5000",
+    withCredentials: true,
+  });
 
   const handleChangeInput = (e) => {
     const id = e.target.id;
@@ -27,17 +36,18 @@ function SignUpForm(props) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log("Sign up");
-    console.log(name);
-    console.log(email);
-    console.log(pw);
+
+    api.post("/users/register", { name, email, password: pw }).then((res) => {
+      console.log("Registered");
+      navigate("/app");
+    });
   };
 
   return (
     <div className="popUpContainer">
       <h1>Sign Up</h1>
       <button onClick={props.onClickClose}>X</button>
-      <form className="form">
+      <form className="logInForm">
         <label htmlFor="userName">Name</label>
         <input id="name" onChange={handleChangeInput}></input>
         <label htmlFor="userEmail">Email</label>

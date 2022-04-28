@@ -18,7 +18,7 @@ function ProfileForm(props) {
           close
         </button>
       </div>
-      <form className="form">
+      <form className="profileForm">
         <div className="input imageBox">
           <img
             className="imgProfile"
