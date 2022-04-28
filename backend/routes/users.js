@@ -62,8 +62,13 @@ router.put(
   "/",
   wrapAsync(async function (req, res) {
     const id = req.session.userId;
-    const { name, email, colorScheme } = req.body;
-    const user = await User.findByIdAndUpdate(id, { name, email, colorScheme });
+    const { name, email, colorScheme, imgUrl } = req.body;
+    const user = await User.findByIdAndUpdate(id, {
+      name,
+      email,
+      colorScheme,
+      imgUrl,
+    });
     if (user) {
       res.sendStatus(201);
     }

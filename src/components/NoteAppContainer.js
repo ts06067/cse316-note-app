@@ -23,6 +23,7 @@ function NoteAppContainer() {
   const [active, setActive] = useState(undefined);
   const [tags, setTags] = useState([]);
   const [profile, setProfile] = useState(null);
+  const [profileImg, setProfileImg] = useState(null);
 
   //body, tags elements
   const text = useRef(null);
@@ -197,7 +198,7 @@ function NoteAppContainer() {
     //if clicked background, profile image button, or 'close (X)' button, then close the profile window.
     handleOpenProfile: (e) => {
       const classes = Array.from(e.target.classList);
-      const eventTargets = ["btnProfile", "btnClose", "btnSave"];
+      const eventTargets = ["btnProfile", "btnClose"];
       eventTargets.forEach((target) => {
         if (classes.indexOf(target) !== -1) {
           setShowProfile(!showProfile);
@@ -216,20 +217,59 @@ function NoteAppContainer() {
       });
     },
     //update profile when clicking 'save' button.
-    handleSaveProfile: (e) => {
-      e.preventDefault(); //prevents default submit action
+    handleSaveProfile: async (imgFile, doDelete) => {
+      //e.preventDefault(); //prevents default submit action
 
-      profile.name = inputProfileName.current.value;
-      profile.email = inputProfileEmail.current.value;
-      profile.colorScheme = inputProfileColorScheme.current.value;
-      //profile.image...
+      const name = inputProfileName.current.value;
+      const email = inputProfileEmail.current.value;
+      const colorScheme = inputProfileColorScheme.current.value;
 
-      api
-        .put("/users/", profile)
-        .then((res) => {
-          console.log("Success");
-        })
-        .catch((err) => console.log(err));
+      let newProfile = { name, email, colorScheme, imgUrl: profile.imgUrl };
+
+      if (doDelete) {
+        newProfile = { ...newProfile, imgUrl: null };
+      }
+
+      if (imgFile) {
+        console.log("we will save " + imgFile);
+
+        const formData = new FormData();
+        const unsignedUploadPreset = "jpxjict6"; //my Cloudinary id
+        formData.append("file", imgFile);
+        formData.append("upload_preset", unsignedUploadPreset);
+
+        const cloudName = "dwp6hrsi5";
+        let res = await axios.post(
+          `https://api.cloudinary.com/v1_1/${cloudName}/upload`,
+          formData
+        );
+
+        const uploadedUrl = res.data.url;
+        newProfile = { ...newProfile, imgUrl: uploadedUrl };
+
+        console.log(res);
+      }
+
+      setProfile(newProfile);
+      const res = await api.put("/users", newProfile);
+
+      console.log(res);
+
+      setShowProfile(!showProfile);
+    },
+
+    handleFileSelected: (e) => {
+      console.log("New File Selected");
+      if (e.target.files && e.target.files[0]) {
+        // Could also do additional error checking on the file type, if we wanted
+        // to only allow certain types of files.
+        const selectedFile = e.target.files[0];
+        return selectedFile;
+      }
+    },
+
+    handleFileDeleted: async (e) => {
+      console.log("File deleted");
     },
 
     handleLogOut: (e) => {
@@ -477,6 +517,8 @@ function NoteAppContainer() {
           onBackgroundClick={handlerProfile.handleBackgroundClick}
           onOpenProfile={handlerProfile.handleOpenProfile}
           onSaveProfile={handlerProfile.handleSaveProfile}
+          onFileSelect={handlerProfile.handleFileSelected}
+          onFileDelete={handlerProfile.handleFileDeleted}
           onLogOut={handlerProfile.handleLogOut}
           inputProfileImage={inputProfileImage}
           inputProfileName={inputProfileName}

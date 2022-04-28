@@ -22,6 +22,10 @@ const userSchema = new Schema(
       required: false,
       default: "light",
     },
+    imgUrl: {
+      type: String,
+      required: false,
+    },
   },
   {
     timestamps: true,

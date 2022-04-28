@@ -70,6 +70,30 @@ button:hover {
   cursor: pointer;
 }
 
+.imgSelectButton {
+  display: inline-block;
+  box-sizing: border-box;
+  background-color: var(--background-color);
+  border: none;
+  border-radius: 10px;
+  height: 50px;
+  width: 150px;
+  font-size: 12pt;
+  flex-shrink: 0;
+  color: var(--text-color);
+  text-align: center;
+  line-height: 35pt;
+}
+
+.imgSelectButton:hover {
+  background-color: var(--selected-color);
+  cursor: pointer;
+}
+
+input[type="file"] {
+  display: none;
+}
+
 img.btnProfile {
   width: 50px;
   height: 50px;
@@ -99,4 +123,5 @@ button.btnSave:hover {
 .imgProfile {
   width: 50px;
   height: 50px;
+  border-radius: 50%;
 }
