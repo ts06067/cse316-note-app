@@ -38,7 +38,10 @@ function LoginForm(props) {
       .post("/users/login", body)
       .then((res) => {
         setErr(false);
-        navigate("/app");
+
+        if (props.isLoaded) {
+          navigate("/app");
+        }
       })
       .catch((err) => setErr(true));
   };

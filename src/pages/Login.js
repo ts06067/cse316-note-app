@@ -6,7 +6,7 @@ import "./css/Login.css";
 
 import { useState } from "react";
 
-function Login() {
+function Login(props) {
   const [showSignUp, setShowSignUp] = useState(false);
 
   const handleShowSignUp = () => {
@@ -18,7 +18,10 @@ function Login() {
       <div className="container">
         <h1>Notes</h1>
         <h3>Organize all your thoughts in one place.</h3>
-        <LoginForm onClickRegister={handleShowSignUp}></LoginForm>
+        <LoginForm
+          isLoaded={props.isLoaded}
+          onClickRegister={handleShowSignUp}
+        ></LoginForm>
       </div>
       {showSignUp && (
         <div className="background">

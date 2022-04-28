@@ -7,22 +7,33 @@ import {
   useRoutes,
 } from "react-router-dom";
 
+import { useState, useEffect } from "react";
+
+import { loadModel } from "./apis/universalSentenceEncoder";
+
 import NoteAppContainer from "./components/NoteAppContainer";
 import Login from "./pages/Login";
 
-function AppRoutes() {
+function AppRoutes(props) {
   const routes = useRoutes([
     { path: "/app", element: <NoteAppContainer /> },
-    { path: "/login", element: <Login /> },
+    { path: "/login", element: <Login isLoaded={props.isLoaded} /> },
   ]);
   return routes;
 }
 
 function App() {
+  const [loaded, setLoaded] = useState(false);
+
+  useEffect(() => {
+    console.log("Start loading model");
+    loadModel().then((res) => setLoaded(res));
+  }, []);
+
   return (
     <div className="App">
       <Router>
-        <AppRoutes />
+        <AppRoutes isLoaded={loaded} />
       </Router>
     </div>
   );

@@ -16,6 +16,8 @@ import "./css/NoteAppContainer.css";
 import Search from "./api/Search.js";
 import { useNavigate } from "react-router-dom";
 
+import { determineRelatednessOfSentences } from "../apis/universalSentenceEncoder";
+
 function NoteAppContainer() {
   //states for notelist / active note / tags for the active note
   const [notes, setNotes] = useState([]);
@@ -52,6 +54,8 @@ function NoteAppContainer() {
   //css property for 'back button', because the button will appear only in mobile size.
   const [styleButton, setStyleButton] = useState({});
 
+  const [similarity, setSimilarity] = useState([]);
+
   const navigate = useNavigate();
 
   //handle mobile responsiveness whenever width changes.
@@ -63,6 +67,12 @@ function NoteAppContainer() {
     baseURL: "http://localhost:5000",
     withCredentials: true,
   });
+
+  useEffect(() => {
+    determineRelatednessOfSentences(["abcd", "abcde", "cdeg"], 0).then((res) =>
+      console.log(res)
+    );
+  }, []);
 
   //fetch notes on load
   useEffect(() => {
@@ -80,6 +90,20 @@ function NoteAppContainer() {
         console.log(error);
       });
   }, []);
+
+  //find similar notes
+  useEffect(() => {
+    if (active !== undefined) {
+      const theId = active._id;
+      const selectedIdx = filteredNotes.findIndex((note) => note._id === theId);
+      const texts = filteredNotes.map((note) => note.text);
+
+      determineRelatednessOfSentences(texts, selectedIdx).then((res) => {
+        const scores = res.map((sim) => sim.score);
+        setSimilarity(scores);
+      });
+    }
+  }, [active, filteredNotes]);
 
   //fetch user profiles on load
   useEffect(() => {
@@ -349,7 +373,7 @@ function NoteAppContainer() {
           //focus new note
           api
             .get("/notes/")
-            .then((res) => {
+            .then(async (res) => {
               searchRef.current.value = "";
 
               let noteList = res.data;
@@ -417,7 +441,7 @@ function NoteAppContainer() {
         .catch((err) => console.log(err));
     },
 
-    handleSelect: (e) => {
+    handleSelect: async (e) => {
       const selectedNote = filteredNotes.find(
         (note) => note._id === e.target.closest(".item").dataset.noteId
       );
@@ -524,6 +548,7 @@ function NoteAppContainer() {
         profile={profile}
         notes={filteredNotes}
         active={active}
+        similarity={similarity}
         searchRef={searchRef}
         onChangeSearch={handlerSearch.handleSearchInputChange}
         onAdd={handlerNotes.handleAdd}

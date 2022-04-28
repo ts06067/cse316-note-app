@@ -4,6 +4,7 @@ import SearchBar from "./SearchBar";
 import TopBarLeft from "./TopBarLeft";
 
 function SidePanel(props) {
+  const similarity = props.similarity;
   return (
     <div className="sidePanel" style={props.visible}>
       <TopBarLeft
@@ -17,8 +18,9 @@ function SidePanel(props) {
       ></SearchBar>
       <div className="noteListWrapper" style={{ height: props.height - 100 }}>
         {props.notes &&
-          props.notes.map((note) => (
+          props.notes.map((note, idx) => (
             <NoteItem
+              similarityIdx={similarity[idx]}
               key={note._id}
               onClick={props.onSelect}
               note={note}

@@ -1,6 +1,7 @@
 import "./css/NoteItem.css";
 
 function NoteItem(props) {
+  const isSimilar = props.similarityIdx > 0.5;
   return (
     <div
       onClick={props.onClick}
@@ -8,6 +9,8 @@ function NoteItem(props) {
       className={
         props.active !== undefined && props.note._id === props.active._id
           ? "item --selected"
+          : isSimilar
+          ? "item --similar"
           : "item"
       }
     >
