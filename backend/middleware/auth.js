@@ -2,7 +2,6 @@ const Note = require("../models/note.model");
 const { wrapAsync } = require("../utils/helper");
 
 module.exports.isLoggedIn = (req, res, next) => {
-  console.log(req.session.id);
   if (!req.session.userId) {
     throw new Error("Need to login first: " + req.session.userId);
   }

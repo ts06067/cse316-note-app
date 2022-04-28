@@ -18,7 +18,7 @@ import { useNavigate } from "react-router-dom";
 
 import { determineRelatednessOfSentences } from "../apis/universalSentenceEncoder";
 
-function NoteAppContainer() {
+function NoteAppContainer(props) {
   //states for notelist / active note / tags for the active note
   const [notes, setNotes] = useState([]);
   const [filteredNotes, setFilteredNotes] = useState([]);
@@ -68,12 +68,6 @@ function NoteAppContainer() {
     withCredentials: true,
   });
 
-  useEffect(() => {
-    determineRelatednessOfSentences(["abcd", "abcde", "cdeg"], 0).then((res) =>
-      console.log(res)
-    );
-  }, []);
-
   //fetch notes on load
   useEffect(() => {
     api
@@ -90,20 +84,6 @@ function NoteAppContainer() {
         console.log(error);
       });
   }, []);
-
-  //find similar notes
-  useEffect(() => {
-    if (active !== undefined) {
-      const theId = active._id;
-      const selectedIdx = filteredNotes.findIndex((note) => note._id === theId);
-      const texts = filteredNotes.map((note) => note.text);
-
-      determineRelatednessOfSentences(texts, selectedIdx).then((res) => {
-        const scores = res.map((sim) => sim.score);
-        setSimilarity(scores);
-      });
-    }
-  }, [active, filteredNotes]);
 
   //fetch user profiles on load
   useEffect(() => {
@@ -389,6 +369,21 @@ function NoteAppContainer() {
               text.current.focus();
 
               text.current.value = noteList[0].text;
+
+              if (active !== undefined) {
+                const theId = noteList[0]._id;
+                const selectedIdx = noteList.findIndex(
+                  (note) => note._id === theId
+                );
+                const texts = noteList.map((note) => note.text);
+
+                determineRelatednessOfSentences(texts, selectedIdx).then(
+                  (res) => {
+                    const scores = res.map((sim) => sim.score);
+                    setSimilarity(scores);
+                  }
+                );
+              }
             })
             .catch((error) => {
               console.log(error);
@@ -433,6 +428,21 @@ function NoteAppContainer() {
               }
 
               handleBackToList();
+
+              if (active !== undefined) {
+                const theId = filteredNoteList[0]._id;
+                const selectedIdx = filteredNotes.findIndex(
+                  (note) => note._id === theId
+                );
+                const texts = filteredNotes.map((note) => note.text);
+
+                determineRelatednessOfSentences(texts, selectedIdx).then(
+                  (res) => {
+                    const scores = res.map((sim) => sim.score);
+                    setSimilarity(scores);
+                  }
+                );
+              }
             })
             .catch((error) => {
               console.log(error);
@@ -454,6 +464,19 @@ function NoteAppContainer() {
 
       text.current.style.display = "flex";
       text.current.focus();
+
+      if (active !== undefined) {
+        const theId = selectedNote._id;
+        const selectedIdx = filteredNotes.findIndex(
+          (note) => note._id === theId
+        );
+        const texts = filteredNotes.map((note) => note.text);
+
+        determineRelatednessOfSentences(texts, selectedIdx).then((res) => {
+          const scores = res.map((sim) => sim.score);
+          setSimilarity(scores);
+        });
+      }
     },
 
     handleEdit: (e) => {

@@ -38,10 +38,7 @@ function LoginForm(props) {
       .post("/users/login", body)
       .then((res) => {
         setErr(false);
-
-        if (props.isLoaded) {
-          navigate("/app");
-        }
+        navigate("/app");
       })
       .catch((err) => setErr(true));
   };

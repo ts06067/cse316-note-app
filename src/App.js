@@ -16,7 +16,7 @@ import Login from "./pages/Login";
 
 function AppRoutes(props) {
   const routes = useRoutes([
-    { path: "/app", element: <NoteAppContainer /> },
+    { path: "/app", element: <NoteAppContainer isLoaded={props.isLoaded} /> },
     { path: "/login", element: <Login isLoaded={props.isLoaded} /> },
   ]);
   return routes;
@@ -27,7 +27,7 @@ function App() {
 
   useEffect(() => {
     console.log("Start loading model");
-    loadModel().then((res) => setLoaded(res));
+    loadModel().then((res) => setLoaded(true));
   }, []);
 
   return (
