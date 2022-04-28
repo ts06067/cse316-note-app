@@ -17,7 +17,7 @@ import Login from "./pages/Login";
 function AppRoutes(props) {
   const routes = useRoutes([
     { path: "/app", element: <NoteAppContainer isLoaded={props.isLoaded} /> },
-    { path: "/login", element: <Login isLoaded={props.isLoaded} /> },
+    { path: "/", element: <Login isLoaded={props.isLoaded} /> },
   ]);
   return routes;
 }

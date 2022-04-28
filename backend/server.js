@@ -56,7 +56,6 @@ const sessionConfig = {
 app.use((req, res, next) => {
   // We can set variables on the request, which we can then access in a future method
   req.requestTime = Date.now();
-  console.log(req.method, req.path);
   // Calling next() makes it go to the next function that will handle the request
   next();
 });

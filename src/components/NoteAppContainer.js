@@ -274,7 +274,7 @@ function NoteAppContainer(props) {
 
       api.post("/users/logout").then((res) => {
         console.log("Logging Out");
-        navigate("/login");
+        navigate("/");
       });
     },
   };
