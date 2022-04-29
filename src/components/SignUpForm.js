@@ -114,6 +114,7 @@ function SignUpForm(props) {
           Password
         </label>
         <input
+          type={"password"}
           className="logInInput"
           id="pw"
           onChange={handleChangeInput}

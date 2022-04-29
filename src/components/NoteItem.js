@@ -18,9 +18,12 @@ function NoteItem(props) {
         {formatString(props.note.text)}
         <br></br>{" "}
       </span>
-      <span style={{ fontSize: 14 }}>
-        {"\n" + formatDate(props.note.lastUpdatedDate)}
-      </span>
+      <div style={{ display: "flex", justifyContent: "space-between" }}>
+        <span style={{ fontSize: 14 }}>
+          {"\n" + formatDate(props.note.lastUpdatedDate)}
+        </span>
+        {isSimilar && <span style={{ fontWeight: "bold" }}>similar</span>}
+      </div>
     </div>
   );
 }

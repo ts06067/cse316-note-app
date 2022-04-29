@@ -58,6 +58,7 @@ function LoginForm(props) {
           Password
         </label>
         <input
+          type={"password"}
           className="logInInput"
           id="pw"
           onChange={handleChangeInput}
