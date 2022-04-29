@@ -79,6 +79,7 @@ function NoteAppContainer(props) {
         );
         setNotes(noteList);
         setFilteredNotes(noteList);
+        setActive(noteList[0]);
       })
       .catch((error) => {
         console.log(error);
