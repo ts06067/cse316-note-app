@@ -1,6 +1,10 @@
 .App {
 }
 
+body {
+  font-family: Helvetica, sans-serif;
+}
+
 @font-face {
   font-family: "Material Icons";
   font-style: normal;
