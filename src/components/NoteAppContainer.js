@@ -403,10 +403,13 @@ function NoteAppContainer(props) {
           api
             .get("/notes/")
             .then((res) => {
-              const noteList = res.data;
+              let noteList = res.data;
               const filteredNoteList = Search.filterCaseInsensitive(
                 noteList,
                 searchRef.current.value
+              );
+              noteList = noteList.sort((a, b) =>
+                a.lastUpdatedDate < b.lastUpdatedDate ? 1 : -1
               );
 
               setNotes(noteList);
